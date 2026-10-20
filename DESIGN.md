@@ -106,9 +106,9 @@ Use a quiet inset empty state within each column. Show validation inline; show t
 
 Keep type, title, owner and deadline visible without opening a task. Make Copy Context accessible directly from the card. The context editor preserves line breaks and indentation and provides enough vertical space for a useful technical briefing. Use explicit labels such as Feature, Bug, Review and Copy Context. Do not add decorative terminal panels, fake activity feeds, invented metrics or nonfunctional search controls to make the app appear technical.
 
-Place a compact copy icon inside the context editor's top-right corner. Its accessible name and tooltip are “Copy Markdown”; copying uses the currently displayed Markdown, including unsaved edits. On success the icon changes to a check until the context changes, and a status message confirms the copy. On failure, focus and select the editor text for manual copying. Keep the editor's right padding clear of the icon.
+Place a compact copy icon inside the context editor's top-right corner. Its accessible name and tooltip are “Copy Markdown”; copying uses the currently displayed Markdown, including unsaved edits. On success the icon changes to a check for one second, then returns to the copy symbol. Announce success to assistive technology without adding visible status text. On failure, show an error, focus and select the editor text for manual copying. Keep the editor's right padding clear of the icon.
 
-The separate “Copy Context” action on each card and in the task modal assembles a Markdown briefing from title, optional description and complete context. Card copy uses saved values; modal copy uses the displayed fields without saving. A small copy icon accompanies the card action. Show an inline, labelled, read-only textarea containing the entire briefing if clipboard writing fails, with a Close action that returns focus to Copy Context.
+The separate “Copy Context” action on each card and in the task modal assembles a Markdown briefing from title, optional description and complete context. Card copy uses saved values; modal copy uses the displayed fields without saving. A small copy icon changes to a check for one second after success and then returns; the screen reader receives a status announcement without visible success text. Show an inline, labelled, read-only textarea containing the entire briefing if clipboard writing fails, with a Close action that returns focus to Copy Context.
 
 ### Movement
 
@@ -126,7 +126,7 @@ Use short, direct language that explains the result of an action.
 | Empty board action | Add your first task |
 | Save action | Save task |
 | Copy button | Copy Context |
-| Copy success | Context copied. Paste it into your AI tool. |
+| Copy success (screen reader) | Context copied. |
 | Copy failure | Couldn't copy context. Select and copy the text manually. |
 | Delete confirmation | Delete “{title}”? This cannot be undone. |
 | Handoff action | Hand off to… |

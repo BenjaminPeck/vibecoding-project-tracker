@@ -3,6 +3,7 @@ import { STAGES, TEAM } from '../data/tasks';
 import { dueLabel, dueShortLabel, dueState } from '../data/dueDate';
 import { taskBriefing } from '../data/briefing';
 import CopyFallback from './CopyFallback';
+import CopyIcon from './CopyIcon';
 
 const dueClasses = {
   safe: 'bg-due-safe-soft text-due-safe',
@@ -17,9 +18,10 @@ function TaskCard({ task, onEdit, onHandoff, now }) {
   const isBug = task.type === 'bug';
   const urgency = dueState(task, now);
   const [handoffError, setHandoffError] = useState('');
-  const [copyMessage, setCopyMessage] = useState('');
+  const [copied, setCopied] = useState(false);
   const [copyFallback, setCopyFallback] = useState('');
   const copyButton = useRef(null);
+  const copyTimer = useRef(null);
   const handoffMenu = useRef(null);
   const ownerButton = useRef(null);
   useEffect(() => {
@@ -38,6 +40,7 @@ function TaskCard({ task, onEdit, onHandoff, now }) {
     return () => {
       document.removeEventListener('pointerdown', dismiss);
       document.removeEventListener('keydown', escape);
+      window.clearTimeout(copyTimer.current);
     };
   }, []);
   function handoff(nextOwner) {
@@ -56,9 +59,11 @@ function TaskCard({ task, onEdit, onHandoff, now }) {
     try {
       await navigator.clipboard.writeText(briefing);
       setCopyFallback('');
-      setCopyMessage('Context copied. Paste it into your AI tool.');
+      setCopied(true);
+      window.clearTimeout(copyTimer.current);
+      copyTimer.current = window.setTimeout(() => setCopied(false), 1000);
     } catch {
-      setCopyMessage('');
+      setCopied(false);
       setCopyFallback(briefing);
     }
   }
@@ -87,8 +92,8 @@ function TaskCard({ task, onEdit, onHandoff, now }) {
         </details>
         <span className={`shrink-0 whitespace-nowrap rounded-md px-2 py-1 text-xs font-medium ${dueClasses[urgency]}`} aria-label={dueLabel(task, urgency)} title={dueLabel(task, urgency)}>{dueShortLabel(task, urgency)}</span>
       </div>
-      <button ref={copyButton} type="button" onClick={copyTask} className="mt-2 flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm font-medium text-brand-primary hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="8" y="8" width="11" height="11" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></svg>Copy Context</button>
-      {copyMessage && <p role="status" className="text-sm text-text-muted">{copyMessage}</p>}
+      <button ref={copyButton} type="button" onClick={copyTask} className="mt-2 flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm font-medium text-brand-primary hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary"><CopyIcon copied={copied} size={16} />Copy Context</button>
+      <span role="status" className="sr-only">{copied ? 'Context copied.' : ''}</span>
       {copyFallback && <CopyFallback text={copyFallback} onClose={() => { setCopyFallback(''); copyButton.current?.focus(); }} />}
       {handoffError && <p role="alert" id={`handoff-error-${task.id}`} className="mt-2 text-sm text-due-overdue">{handoffError}</p>}
     </li>

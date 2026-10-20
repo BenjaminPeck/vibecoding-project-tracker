@@ -4,6 +4,7 @@ import { localDate, validDate } from '../data/storage';
 import { CONTEXT_TEMPLATE, CONTEXT_TOOLS, contextUpdatedAt, relativeContextTime } from '../data/context';
 import { taskBriefing } from '../data/briefing';
 import CopyFallback from './CopyFallback';
+import CopyIcon from './CopyIcon';
 const control = 'mt-1 min-h-11 w-full rounded-lg border border-border-control bg-white px-3 py-2 text-sm';
 const secondary = 'min-h-11 rounded-lg border border-border-control px-4 py-2 text-sm font-medium';
 export default function TaskModal({ task, onClose, onSave, onDelete }) {
@@ -12,23 +13,31 @@ export default function TaskModal({ task, onClose, onSave, onDelete }) {
   const cancelDelete = useRef(null);
   const contextInput = useRef(null);
   const briefingButton = useRef(null);
+  const markdownTimer = useRef(null);
+  const briefingTimer = useRef(null);
   const [form, setForm] = useState(() => task || { title:'', description:'', type:'feature', status:'todo', assignee:TEAM[0], dueDate:'', context:'', contextTool:null });
   const [clock, setClock] = useState(() => new Date());
   const [error, setError] = useState('');
   const [titleError, setTitleError] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [copyMessage, setCopyMessage] = useState('');
-  const [briefingMessage, setBriefingMessage] = useState('');
+  const [markdownCopied, setMarkdownCopied] = useState(false);
+  const [briefingCopied, setBriefingCopied] = useState(false);
   const [briefingFallback, setBriefingFallback] = useState('');
   useEffect(() => { dialog.current.showModal(); title.current.focus(); }, []);
   useEffect(() => { const timer = window.setInterval(() => setClock(new Date()), 60_000); return () => window.clearInterval(timer); }, []);
+  useEffect(() => () => { window.clearTimeout(markdownTimer.current); window.clearTimeout(briefingTimer.current); }, []);
   useEffect(() => { if (deleting) cancelDelete.current.focus(); else title.current?.focus(); }, [deleting]);
-  function change(e) { setForm({ ...form, [e.target.name]:e.target.value }); if (e.target.name === 'context') setCopyMessage(''); }
+  function change(e) { setForm({ ...form, [e.target.name]:e.target.value }); if (e.target.name === 'context') { setCopyMessage(''); setMarkdownCopied(false); } }
   async function copyContext() {
     try {
       await navigator.clipboard.writeText(contextInput.current.value);
-      setCopyMessage('Markdown copied. Paste it into your AI tool.');
+      setCopyMessage('');
+      setMarkdownCopied(true);
+      window.clearTimeout(markdownTimer.current);
+      markdownTimer.current = window.setTimeout(() => setMarkdownCopied(false), 1000);
     } catch {
+      setMarkdownCopied(false);
       contextInput.current.focus();
       contextInput.current.select();
       setCopyMessage("Couldn't copy automatically. The Markdown is selected; use your keyboard to copy it.");
@@ -39,9 +48,11 @@ export default function TaskModal({ task, onClose, onSave, onDelete }) {
     try {
       await navigator.clipboard.writeText(briefing);
       setBriefingFallback('');
-      setBriefingMessage('Context copied. Paste it into your AI tool.');
+      setBriefingCopied(true);
+      window.clearTimeout(briefingTimer.current);
+      briefingTimer.current = window.setTimeout(() => setBriefingCopied(false), 1000);
     } catch {
-      setBriefingMessage('');
+      setBriefingCopied(false);
       setBriefingFallback(briefing);
     }
   }
@@ -83,8 +94,9 @@ export default function TaskModal({ task, onClose, onSave, onDelete }) {
           <div className="relative">
             <textarea ref={contextInput} id="task-context" name="context" value={form.context} onChange={change} rows={9} spellCheck={false} className={`${control} resize-y pr-14 font-mono leading-6`} />
             <button type="button" disabled={!form.context} onClick={copyContext} aria-label="Copy Markdown" title="Copy Markdown" className="absolute right-2 top-3 flex h-11 w-11 items-center justify-center rounded-lg border border-border-subtle bg-white text-text-primary shadow-sm hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary disabled:cursor-not-allowed disabled:opacity-50">
-              {copyMessage.startsWith('Markdown copied') ? <svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 4 4L19 6" /></svg> : <svg aria-hidden="true" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="8" y="8" width="11" height="11" rx="2" /><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" /></svg>}
+              <CopyIcon copied={markdownCopied} size={19} />
             </button>
+            <span role="status" className="sr-only">{markdownCopied ? 'Markdown copied.' : ''}</span>
           </div>
           {copyMessage && <p role="status" className="mt-2 text-sm text-text-muted">{copyMessage}</p>}
           <p className="mt-2 text-sm text-text-muted">{relativeContextTime(task?.contextUpdatedAt, clock)}</p>
@@ -93,11 +105,11 @@ export default function TaskModal({ task, onClose, onSave, onDelete }) {
         </section>
       </div>
       {error && <p role="alert" className="mt-4 text-sm text-due-overdue">{error}</p>}
-      {briefingMessage && <p role="status" className="mt-4 text-sm text-text-muted">{briefingMessage}</p>}
+      <span role="status" className="sr-only">{briefingCopied ? 'Context copied.' : ''}</span>
       {briefingFallback && <CopyFallback text={briefingFallback} onClose={() => { setBriefingFallback(''); briefingButton.current?.focus(); }} />}
       <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border-subtle pt-4">
         {task && <button type="button" onClick={() => {setDeleting(true);setError('');}} className={`${secondary} text-due-overdue`}>Delete task</button>}
-        <button ref={briefingButton} type="button" onClick={copyTask} className={`${secondary} text-brand-primary`}>Copy Context</button>
+        <button ref={briefingButton} type="button" onClick={copyTask} className={`${secondary} inline-flex items-center gap-2 text-brand-primary`}><CopyIcon copied={briefingCopied} size={16} />Copy Context</button>
         <div className="ml-auto flex flex-wrap gap-3"><button type="button" onClick={onClose} className={secondary}>Cancel</button><button type="submit" className="min-h-11 rounded-lg bg-brand-primary px-4 py-2 font-medium text-white hover:bg-brand-accent">Save task</button></div>
       </div>
     </form>}
