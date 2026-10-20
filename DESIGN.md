@@ -106,6 +106,8 @@ Use a quiet inset empty state within each column. Show validation inline; show t
 
 Keep type, title, owner and deadline visible without opening a task. Make Copy Context accessible directly from the card. The context editor preserves line breaks and indentation and provides enough vertical space for a useful technical briefing. Use explicit labels such as Feature, Bug, Review and Copy Context. Do not add decorative terminal panels, fake activity feeds, invented metrics or nonfunctional search controls to make the app appear technical.
 
+Place a compact copy icon inside the context editor's top-right corner. Its accessible name and tooltip are “Copy Markdown”; copying uses the currently displayed Markdown, including unsaved edits. On success the icon changes to a check until the context changes, and a status message confirms the copy. On failure, focus and select the editor text for manual copying. Keep the editor's right padding clear of the icon.
+
 ### Movement
 
 Use the status dropdown for moving tasks. Do not show drag handles or grabbing cursors unless drag-and-drop is deliberately selected and implemented later. The distinctive feature remains a PRD decision.

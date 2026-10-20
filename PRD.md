@@ -127,6 +127,7 @@ These bands use local calendar dates, not rolling 24-hour periods. State labels 
 - Saved context changes update contextUpdatedAt.
 - Unrelated changes do not.
 - Show a relative last-updated hint.
+- Provide an inline copy control for the context editor that copies its currently displayed Markdown, including unsaved edits, without saving the task. Give success feedback and a manual-selection fallback if clipboard access fails.
 - Offer Background, Constraints, Tried so far and Pick up as a starting template. Users can record prompts and their outcomes in Tried so far.
 - Save the timestamp on creation only if context contains non-whitespace text; subsequently update it when saved context changes, including clearing it. Changing only the AI tool does not change the context timestamp.
 
