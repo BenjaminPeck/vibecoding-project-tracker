@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { STAGES, TEAM } from '../data/tasks';
 import { localDate, validDate } from '../data/storage';
 import { CONTEXT_TEMPLATE, CONTEXT_TOOLS, contextUpdatedAt, relativeContextTime } from '../data/context';
+import { taskBriefing } from '../data/briefing';
+import CopyFallback from './CopyFallback';
 const control = 'mt-1 min-h-11 w-full rounded-lg border border-border-control bg-white px-3 py-2 text-sm';
 const secondary = 'min-h-11 rounded-lg border border-border-control px-4 py-2 text-sm font-medium';
 export default function TaskModal({ task, onClose, onSave, onDelete }) {
@@ -9,12 +11,15 @@ export default function TaskModal({ task, onClose, onSave, onDelete }) {
   const title = useRef(null);
   const cancelDelete = useRef(null);
   const contextInput = useRef(null);
+  const briefingButton = useRef(null);
   const [form, setForm] = useState(() => task || { title:'', description:'', type:'feature', status:'todo', assignee:TEAM[0], dueDate:'', context:'', contextTool:null });
   const [clock, setClock] = useState(() => new Date());
   const [error, setError] = useState('');
   const [titleError, setTitleError] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [copyMessage, setCopyMessage] = useState('');
+  const [briefingMessage, setBriefingMessage] = useState('');
+  const [briefingFallback, setBriefingFallback] = useState('');
   useEffect(() => { dialog.current.showModal(); title.current.focus(); }, []);
   useEffect(() => { const timer = window.setInterval(() => setClock(new Date()), 60_000); return () => window.clearInterval(timer); }, []);
   useEffect(() => { if (deleting) cancelDelete.current.focus(); else title.current?.focus(); }, [deleting]);
@@ -27,6 +32,17 @@ export default function TaskModal({ task, onClose, onSave, onDelete }) {
       contextInput.current.focus();
       contextInput.current.select();
       setCopyMessage("Couldn't copy automatically. The Markdown is selected; use your keyboard to copy it.");
+    }
+  }
+  async function copyTask() {
+    const briefing = taskBriefing({ title:form.title, description:form.description, context:contextInput.current.value });
+    try {
+      await navigator.clipboard.writeText(briefing);
+      setBriefingFallback('');
+      setBriefingMessage('Context copied. Paste it into your AI tool.');
+    } catch {
+      setBriefingMessage('');
+      setBriefingFallback(briefing);
     }
   }
   function save(e) {
@@ -77,8 +93,11 @@ export default function TaskModal({ task, onClose, onSave, onDelete }) {
         </section>
       </div>
       {error && <p role="alert" className="mt-4 text-sm text-due-overdue">{error}</p>}
+      {briefingMessage && <p role="status" className="mt-4 text-sm text-text-muted">{briefingMessage}</p>}
+      {briefingFallback && <CopyFallback text={briefingFallback} onClose={() => { setBriefingFallback(''); briefingButton.current?.focus(); }} />}
       <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border-subtle pt-4">
         {task && <button type="button" onClick={() => {setDeleting(true);setError('');}} className={`${secondary} text-due-overdue`}>Delete task</button>}
+        <button ref={briefingButton} type="button" onClick={copyTask} className={`${secondary} text-brand-primary`}>Copy Context</button>
         <div className="ml-auto flex flex-wrap gap-3"><button type="button" onClick={onClose} className={secondary}>Cancel</button><button type="submit" className="min-h-11 rounded-lg bg-brand-primary px-4 py-2 font-medium text-white hover:bg-brand-accent">Save task</button></div>
       </div>
     </form>}

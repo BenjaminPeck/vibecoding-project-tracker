@@ -108,6 +108,8 @@ Keep type, title, owner and deadline visible without opening a task. Make Copy C
 
 Place a compact copy icon inside the context editor's top-right corner. Its accessible name and tooltip are “Copy Markdown”; copying uses the currently displayed Markdown, including unsaved edits. On success the icon changes to a check until the context changes, and a status message confirms the copy. On failure, focus and select the editor text for manual copying. Keep the editor's right padding clear of the icon.
 
+The separate “Copy Context” action on each card and in the task modal assembles a Markdown briefing from title, optional description and complete context. Card copy uses saved values; modal copy uses the displayed fields without saving. A small copy icon accompanies the card action. Show an inline, labelled, read-only textarea containing the entire briefing if clipboard writing fails, with a Close action that returns focus to Copy Context.
+
 ### Movement
 
 Use the status dropdown for moving tasks. Do not show drag handles or grabbing cursors unless drag-and-drop is deliberately selected and implemented later. The distinctive feature remains a PRD decision.
