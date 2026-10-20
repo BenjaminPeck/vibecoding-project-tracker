@@ -2,13 +2,16 @@ import { STAGES } from '../data/tasks';
 
 function TaskCard({ task, onEdit }) {
   const initials = task.assignee.split(' ').map(part => part[0]).join('');
+  const isBug = task.type === 'bug';
   return (
     <li onClick={event => {
       if (event.target.closest('button, a, input, select, textarea')) return;
       event.currentTarget.querySelector('button')?.focus();
       onEdit(task);
-    }} className="min-w-0 cursor-pointer rounded-[10px] border border-border-subtle bg-surface-card p-4 transition-colors hover:border-border-control motion-reduce:transition-none">
-      <span className="text-xs font-semibold uppercase tracking-wider text-text-muted">{task.type}</span>
+    }} className={`min-w-0 cursor-pointer rounded-[10px] border border-border-subtle border-l-[3px] bg-surface-card p-4 transition-colors hover:border-border-control motion-reduce:transition-none ${isBug ? 'border-l-type-bug' : 'border-l-type-feature'}`}>
+      <span className={`inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-semibold ${isBug ? 'bg-type-bug-soft text-type-bug' : 'bg-type-feature-soft text-type-feature'}`}>
+        <span aria-hidden="true">{isBug ? '!' : '◆'}</span>{isBug ? 'Bug' : 'Feature'}
+      </span>
       <h4 className="mt-2 break-words text-sm font-semibold leading-6"><button onClick={() => onEdit(task)} className="min-h-11 w-full break-words text-left hover:text-brand-primary">{task.title}</button></h4>
       <p className="mt-2 break-words text-sm leading-6 text-text-muted">{task.description}</p>
       <div className="mt-5 flex min-w-0 items-center gap-2 border-t border-border-subtle pt-3">
