@@ -17,7 +17,7 @@ Desktop composition, top to bottom:
 3. Board: four equal columns labelled To Do, In Progress, Review and Done, with task counts beside the headings.
 4. Task cards: type label, title, assignee, due-date label and a distinct “Copy Context” action.
 
-Use 24px outer padding, 16px column gaps and 12px card gaps. At intermediate desktop widths the board may scroll horizontally; at 320 CSS pixels stack columns in stage order to support zoom and reflow without horizontal page scrolling. Keep the primary desktop target of 1280×720 usable. The header and deliverable strip remain in normal document flow rather than covering the board while scrolling.
+Use 12px vertical header padding and 24px desktop horizontal padding. Use 24px outer board padding, 16px column gaps and 12px card gaps. At intermediate desktop widths the board may scroll horizontally; at 320 CSS pixels stack columns in stage order to support zoom and reflow without horizontal page scrolling. Keep the primary desktop target of 1280×720 usable. The header and deliverable strip remain in normal document flow rather than covering the board while scrolling.
 
 Use colour mainly for primary actions, small stage markers, type badges and urgency labels. Avoid decorative gradients, oversized hero sections and playful illustrations. Keep task information prominent, with modest corner radii, crisp separators and minimal shadows. Stage names remain visible so stage colour cannot be confused with urgency.
 
@@ -68,7 +68,7 @@ Use local system fonts to avoid font downloads and keep the prototype predictabl
 | Body | Same as heading | Consistent, readable forms and cards |
 | Context/code | ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace | Preserves alignment in Markdown and code snippets |
 
-- Page title: 24px / 32px, semibold, slightly tight letter spacing (-0.02em).
+- Page title: 20px / 28px, semibold, slightly tight letter spacing (-0.02em).
 - Column and modal section titles: 16px / 24px, semibold, sentence case.
 - Card titles: 14px / 20px, semibold; wrap rather than hide the title.
 - Body, buttons and form values: 14px / 20px.
@@ -80,7 +80,7 @@ Use local system fonts to avoid font downloads and keep the prototype predictabl
 
 ### Cards
 
-White surface, 1px subtle border, 10px radius, 16px padding and a small shadow on hover. Use a clear title control to open editing and a separate Copy Context button. No nested buttons. Card surface clicks may open editing, but the copy action must stop that behaviour. Show the assignee's name alongside initials so ownership is unambiguous.
+White surface, 1px subtle border, 10px radius, 16px padding and a small shadow on hover. Use a clear title control to open editing and a separate Copy Context button. No nested buttons. Clicking any non-interactive card area opens editing and establishes the title button as the focus-return target. Separate controls such as Copy Context must not open editing. Show the assignee's name alongside initials so ownership is unambiguous.
 
 ### Buttons and controls
 
