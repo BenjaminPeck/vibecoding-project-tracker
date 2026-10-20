@@ -158,7 +158,7 @@ Fill in:
 - Authentication / accounts.
 - Real GitHub integration.
 - A real backend / shared database.
-- Mobile responsive — desktop only is fine.
+- Dedicated mobile features. Accessible reflow for narrow viewports and browser zoom remains required.
 - Multi-team support.
 - Real-time collaboration.
 
@@ -206,13 +206,13 @@ These clarify gaps in the slides and need Benjamin’s review:
 
 ## 15. Non-functional requirements
 
-NFR-01 is directly required by the assessment. Other rows are proposed quality criteria for Benjamin’s review. Desktop remains the hackathon target; mobile layouts remain outside the agreed scope.
+NFR-01 is directly required by the assessment. Other rows are proposed quality criteria for Benjamin’s review. Desktop remains the primary target, with accessible reflow required for browser zoom and narrow viewports. Target WCAG 2.2 AA; conformance must be evaluated on the finished implementation.
 
 | ID | Requirement and acceptance check | Priority | Justification |
 |---|---|---|---|
 | NFR-01 | Assessor can open the deployed prototype and use its features without registration or a paid subscription; test in a signed-out browser | MVP | Assessment pp. 4 and 6 requires marking access |
-| NFR-02 | Core flows work with a keyboard; inputs have labels, focus is visible, modal opening/closing manages focus, and type/urgency has text or icon cues | MVP | Supports usable, understandable interaction |
-| NFR-03 | At a 1280×720 desktop viewport, modal controls remain reachable and board content remains readable, allowing scrolling where necessary | MVP | Supports a reliable laptop demonstration |
+| NFR-02 | Pass DESIGN.md §8 keyboard, focus, dialog, semantics, form, feedback, contrast, target-size and motion checks; verify with keyboard and VoiceOver/Safari and record results | MVP | Supports usable, understandable interaction |
+| NFR-03 | Remain usable at 1280×720, 200% text enlargement and 320 CSS px width; stack columns and anchor slots at narrow widths, prevent horizontal page scrolling and clipping, and keep modal controls reachable | MVP | Supports a reliable laptop demonstration |
 | NFR-04 | Saving and updating the board with 100 fictional tasks completes within one second on the recorded test laptop/browser | MVP | Proposed measurable responsiveness target |
 | NFR-05 | Storage failures show an actionable error and never falsely report a successful save; normal reload/reopen retains data | MVP | Protects user effort and communicates limitations |
 | NFR-06 | Core flows pass in current Chrome and one other browser; record versions and failures | MVP | Reduces browser-specific marking problems |

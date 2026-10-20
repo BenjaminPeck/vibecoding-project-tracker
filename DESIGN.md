@@ -1,114 +1,176 @@
 # Vibecoding Project Tracker — Design
 
-**Status:** Hackathon starter design doc · fill in the **`<TODO>`** sections before you tag `design-done`.
+Status: Revised direction for software engineers: modern, warm and focused.
+Owner: Benjamin Peck, sole developer. The application serves a team of users.
+Scope: M3 `design-done`. Visual specification and reusable tokens for the later build milestones.
 
-**Why this file exists.** This tracker is your tool. It should look like *your* tool — not a generic Kanban with default Tailwind blue. Twenty minutes of design decisions here will be visible on every screen for the next six weeks of Module 5.
+## 1. Mood and layout
 
-**Who owns this.** Person B, during the same window the rest of the team is reviewing the PRD. By the time the team converges to start M4 (`data-model`), this file should be filled in and the colors should already be in `tailwind.config.js`.
+A modern engineering workspace with warm surfaces, precise typography and purposeful colour, built for scanning tasks and resuming technical work.
 
----
+Design for software engineers working in teams. Use warm ivory surroundings, white task cards, charcoal text and saturated indigo primary actions. Pale lavender, blue, amber and sage column headers add colour without tinting every task. Keep controls compact, labels explicit and technical context easy to scan. This direction reflects Benjamin’s preference; usability has not yet been tested. No external visual references have been selected.
 
-## 1. Mood / vibe
+Desktop composition, top to bottom:
 
-One sentence that captures the feeling the tracker should leave you with.
+1. Header: product name and short description on the left; primary “Add task” action on the right.
+2. Deliverable strip: Presentation, Demo, Report and Documentation in four equal slots above the board. Each includes a label, empty/linked indicator and URL control.
+3. Board: four equal columns labelled To Do, In Progress, Review and Done, with task counts beside the headings.
+4. Task cards: type label, title, assignee, due-date label and a distinct “Copy Context” action.
 
-`<TODO>`
+Use 24px outer padding, 16px column gaps and 12px card gaps. At intermediate desktop widths the board may scroll horizontally; at 320 CSS pixels stack columns in stage order to support zoom and reflow without horizontal page scrolling. Keep the primary desktop target of 1280×720 usable. The header and deliverable strip remain in normal document flow rather than covering the board while scrolling.
 
-Two or three references that capture the vibe (links to dribbble shots, screenshots of apps you admire, Pinterest boards — anything visual):
+Use colour mainly for primary actions, small stage markers, type badges and urgency labels. Avoid decorative gradients, oversized hero sections and playful illustrations. Keep task information prominent, with modest corner radii, crisp separators and minimal shadows. Stage names remain visible so stage colour cannot be confused with urgency.
 
-- `<TODO>`
-- `<TODO>`
-- `<TODO>`
+## 2. Colour tokens
 
-Anti-references — what we are explicitly **not** trying to look like:
+All values are implemented in `tailwind.config.js`. Foreground tokens below are intended for text/icons on white or the matching pale surface. Border tokens are decorative separators, not the sole indication of an input or action.
 
-- `<TODO>`
-
-## 2. Color palette
-
-These are the colors the build milestones will reference. Once chosen, paste the hex values into `tailwind.config.js` so the rest of the team can use Tailwind utility classes (e.g. `bg-brand-primary`, `border-due-warning`).
-
-### Brand
-
-| Token | Hex | Where it shows up |
+| Token | Hex | Use |
 |---|---|---|
-| `brand-primary` | `<TODO>` | Header, "+" button, focus rings |
-| `brand-accent` | `<TODO>` | Highlights, hover states, links |
-| `surface-page` | `<TODO>` | Page background |
-| `surface-card` | `<TODO>` | Card background |
-| `text-primary` | `<TODO>` | Body text |
-| `text-muted` | `<TODO>` | Captions, dates, counts |
+| brand-primary | #4338CA | Primary buttons with white text and focus outline |
+| brand-accent | #3730A3 | Primary button hover and active states |
+| surface-page | #F8F7F4 | Page background |
+| surface-card | #FFFFFF | Task cards and modal |
+| surface-column | #F0EFEB | Board columns and secondary surfaces |
+| surface-hover | #E8E6F2 | Secondary hover state |
+| text-primary | #24232B | Headings and primary content |
+| text-muted | #625F6B | Supporting text, dates and counts |
+| border-subtle | #DEDCE2 | Cards and column separators |
+| border-control | #807B89 | Input outlines |
+| stage-todo | #EDE9FE | Lavender To Do header surface |
+| stage-progress | #DBEAFE | Blue In Progress header surface |
+| stage-review | #FEF3C7 | Amber Review header surface |
+| stage-done | #DCFCE7 | Sage Done header surface |
+| type-feature | #5B21B6 | Feature icon, label and small accent stripe |
+| type-feature-soft | #F3E8FF | Feature label background |
+| type-bug | #9D174D | Bug icon, label and small accent stripe |
+| type-bug-soft | #FCE7F3 | Bug label background |
+| due-safe | #166534 | Calm due-date text/icon |
+| due-safe-soft | #F0FDF4 | Calm due-date background |
+| due-warning | #854D0E | Due within 24 hours |
+| due-warning-soft | #FEF9C3 | Warning date background |
+| due-overdue | #991B1B | Overdue text/icon and destructive actions |
+| due-overdue-soft | #FEE2E2 | Overdue date background |
+| due-neutral | #475569 | Done or no due date |
+| due-neutral-soft | #F1F5F9 | Neutral date background |
 
-### Task type (M6 `tag-style`)
+Task type is shown with a labelled badge/icon and a 3px left accent. Urgency uses the separate due-date label and its pale background. Keep the rest of the card white so the two meanings do not compete.
 
-| Token | Hex | When used |
-|---|---|---|
-| `type-feature` | `<TODO>` | Cards tagged `feature` (accent stripe + icon) |
-| `type-bug` | `<TODO>` | Cards tagged `bug` (accent stripe + icon) |
-
-### Due-date states (M8 `due-tint`)
-
-| Token | Hex | When used |
-|---|---|---|
-| `due-safe` | `<TODO>` | More than 2 days out |
-| `due-warning` | `<TODO>` | Less than 24 hours |
-| `due-overdue` | `<TODO>` | Past due |
-| `due-neutral` | `<TODO>` | Done (overrides date) |
+Due-state boundaries follow the PRD: Done always neutral; no date neutral; past due overdue; next 24 hours inclusive warning; later calm, including the 24–48-hour interval. Date-only deadlines end at local 23:59:59.
 
 ## 3. Typography
 
-| Role | Font | Why |
+Use local system fonts to avoid font downloads and keep the prototype predictable.
+
+| Role | Stack | Reason |
 |---|---|---|
-| Heading | `<TODO>` | `<TODO one sentence>` |
-| Body | `<TODO>` | `<TODO one sentence>` |
-| Monospace (tags, badges, code) | `<TODO>` | `<TODO one sentence>` |
+| Heading | ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif | Clear headings using the device's familiar font |
+| Body | Same as heading | Consistent, readable forms and cards |
+| Context/code | ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace | Preserves alignment in Markdown and code snippets |
 
-Suggested sizes (override only if the design demands it):
+- Page title: 24px / 32px, semibold, slightly tight letter spacing (-0.02em).
+- Column and modal section titles: 16px / 24px, semibold, sentence case.
+- Card titles: 14px / 20px, semibold; wrap rather than hide the title.
+- Body, buttons and form values: 14px / 20px.
+- Supporting labels and timestamps: 14px / 20px; do not use muted colour to hide important information.
+- Context editor: 13px / 20px, monospace.
+- Use monospace for code, file paths and technical identifiers; use proportional text for task titles and prose. Use tabular numerals for task counts and dates.
 
-- Page title: 24 px / semibold
-- Section header: 16 px / semibold uppercase
-- Card title: 14 px / medium
-- Body: 14 px / regular
-- Caption: 12 px / regular muted
+## 4. Components and interaction
 
-## 4. Component principles
+### Cards
 
-One short sentence per element. These set the tone for the build phase — Person A's modal and Person B's anchor board should both feel like they came from this doc.
+White surface, 1px subtle border, 10px radius, 16px padding and a small shadow on hover. Use a clear title control to open editing and a separate Copy Context button. No nested buttons. Card surface clicks may open editing, but the copy action must stop that behaviour. Show the assignee's name alongside initials so ownership is unambiguous.
 
-- **Cards:** `<TODO>` (e.g. "Light, almost weightless; the only weight is from a 1px border, no shadow except on hover.")
-- **Buttons:** `<TODO>` (e.g. "Solid fill, no gradient, generous padding, rounded-md.")
-- **Modal:** `<TODO>` (e.g. "Centered, max-width-md, slate-900 backdrop at 50% opacity.")
-- **Empty states:** `<TODO>` (e.g. "Dashed border, muted text, never sad.")
-- **Drag affordance (if used):** `<TODO>` (e.g. "None — we use a status dropdown.")
+### Buttons and controls
 
-## 5. Voice / microcopy
+Primary buttons have indigo fill, white text, 8px radius and at least 44px height. Secondary actions have dark text on white with a control border. Destructive actions use the overdue colour plus explicit wording. Every action has a visible keyboard focus outline with an offset. Use text labels for unfamiliar icons.
 
-Three lines of microcopy that capture the tone of the product. Keep it short — these are the words a stressed user reads at 11pm.
+### Task modal
 
-| Where | Text |
+Centre a white modal up to 640px wide over a dark translucent backdrop. Limit height to 85vh and scroll its content. Show title and description first, then task type/status/assignee/due date, then Context, AI tool and its update time. Keep Save task and Cancel accessible in the footer, with Delete task separated on the left for existing tasks. Use visible labels, adjacent error text, focus containment, Escape dismissal and focus return to the opener. Cancel closes without saving.
+
+### Ownership and handoff
+
+Show a restrained initials badge beside each configured team member name; avoid oversized avatars or decorative profile illustrations. “Hand off to…” changes the assignee and shows a confirmation. This changes browser-local task data; do not imply that a teammate has received a notification.
+
+### Deliverable slots
+
+Show one URL input per slot with a Save link action. Filled slots show “Linked” and an Open link action. Empty slots show “No link yet”. Keep edit/remove actions available. Labels and status text accompany indicators, so status does not depend on colour.
+
+### Feedback and empty states
+
+Use a quiet inset empty state within each column. Show validation inline; show transient confirmations in a status region readable by assistive technology. Failed saves and clipboard errors must remain visible until dismissed or resolved. Confirm deletion with named Delete task and Cancel actions. Respect reduced-motion preferences; any toast fade is at most 150ms.
+
+### Engineering workflow
+
+Keep type, title, owner and deadline visible without opening a task. Make Copy Context accessible directly from the card. The context editor preserves line breaks and indentation and provides enough vertical space for a useful technical briefing. Use explicit labels such as Feature, Bug, Review and Copy Context. Do not add decorative terminal panels, fake activity feeds, invented metrics or nonfunctional search controls to make the app appear technical.
+
+### Movement
+
+Use the status dropdown for moving tasks. Do not show drag handles or grabbing cursors unless drag-and-drop is deliberately selected and implemented later. The distinctive feature remains a PRD decision.
+
+## 5. Voice and microcopy
+
+Use short, direct language that explains the result of an action.
+
+| Location | Text |
 |---|---|
-| "+" button label | `<TODO>` (e.g. "+ Task" or "Add task" or "New") |
-| Empty column placeholder | `<TODO>` (e.g. "Nothing here yet — keep going.") |
-| Toast after "Copy as Prompt Context" | `<TODO>` (e.g. "Copied. Now paste it into the AI.") |
-| Confirm-delete message | `<TODO>` (e.g. "Delete this task? You can't undo.") |
-| Handoff toast (M7 `task-owner`) | `<TODO>` (e.g. "Handed off to {name}. They've got it.") |
+| Product description | Tasks, context and deliverables for your team. |
+| Primary action | Add task |
+| Empty column | No tasks here yet. |
+| Empty board action | Add your first task |
+| Save action | Save task |
+| Copy button | Copy Context |
+| Copy success | Context copied. Paste it into your AI tool. |
+| Copy failure | Couldn't copy context. Select and copy the text manually. |
+| Delete confirmation | Delete “{title}”? This cannot be undone. |
+| Handoff action | Hand off to… |
+| Handoff confirmation | Task assigned to {name}. |
+| Context hint | Record the background, constraints, what you tried and what comes next. |
+| Context timestamp | Last updated {relativeTime} |
+| No context timestamp | No context saved yet. |
+| Required title | Enter a task title. |
+| Invalid URL | Enter a link starting with https:// or http://. |
+| Local storage failure | Couldn't save in this browser. Keep this page open and check browser storage settings. |
+| Prototype storage note | Saved in this browser. Changes are not shared across devices. |
 
-## 6. Logo / wordmark
+## 6. Wordmark
 
-The tracker probably doesn't need a logo, but it does need a name and a wordmark style.
+Product name: Vibecoding Project Tracker, matching the PRD.
+Use the heading font at semibold weight in text-primary, with a small indigo accent alongside it. No custom logo is required. Plain typography keeps the header compact and leaves room for the board.
 
-- **Product name:** `<TODO>` (match PRD §11 team identity)
-- **Wordmark style:** `<TODO>` (e.g. "Just the name in the heading font, brand-primary color, no icon.")
+## 7. Design review checklist
 
-## 7. Out of scope (this hackathon)
+- Palette and fonts exist in Tailwind and the base page uses them.
+- Text colour pairs meet at least 4.5:1 contrast for normal text.
+- Type and urgency have distinct locations, labels and meaning.
+- Keyboard focus, modal behaviour and errors are specified for implementation.
+- Ownership describes application team members, while Benjamin owns development.
+- UI wording accurately describes localStorage without claiming live collaboration.
+- Review rendered screens during later implementation; this document alone does not validate the final UI.
 
-To keep design tight, the following are explicitly not part of `design-done`:
+Out of scope: dark mode, theme switching, custom icon artwork, elaborate animation and a database. Design documentation does not mark the board, modal or other build milestones complete.
 
-- A dark mode toggle. Pick one mode and ship it.
-- Multiple themes. One brand, applied consistently.
-- Animations beyond a 200 ms fade on toast notifications.
-- A custom icon set. Use [Lucide icons](https://lucide.dev) via Tailwind classes if you need any.
 
----
+## 8. Accessibility acceptance plan
 
-*DESIGN.md version: hackathon-starter v1*
+Target WCAG 2.2 Level AA across the finished prototype. This is a design target, not a claim of compliance; assess all applicable criteria on the implementation. The checks below prioritise this application's main risks.
+
+| Check | Implementation and manual acceptance |
+|---|---|
+| Keyboard | Complete create, edit, assign, move, copy and delete with Tab, Shift+Tab, Enter/Space and native select keys. No mouse-only actions or keyboard traps. Add a skip link to the main board. |
+| Focus | Use a clearly visible 2px indigo outline with a 2px offset. Keep focused controls visible and unobscured. After deletion, focus the next task or Add task if none remain. |
+| Dialogs | Give the modal an accessible title; move focus inside, contain Tab navigation, make background content inert, support Escape and restore focus to the opener. A delete confirmation initially focuses Cancel. |
+| Semantics | Use native buttons, inputs and selects, one page heading, labelled stage sections and task lists. Icon-only controls have accessible names; decorative icons are hidden from assistive technology. |
+| Forms | Associate visible labels with inputs. Connect hints/errors using aria-describedby and mark invalid fields with aria-invalid. Explain how to fix errors and retain entered values; focus the first invalid input after failed submission. |
+| Feedback | Announce copy, save, handoff and status changes through a polite status region without stealing focus. Announce blocking errors appropriately. Repeated copy buttons include the task title in their accessible name while retaining “Copy Context”. |
+| Colour and contrast | Normal text at least 4.5:1; essential control boundaries, icons and focus indicators at least 3:1 against adjacent colours. Show Feature/Bug and urgency text as well as colour. Check hover, focus and validation states too. |
+| Zoom and reflow | At 200% text enlargement, nothing clips or disappears. At 320 CSS px (equivalent to 400% zoom on a 1280px viewport), stack board columns and deliverable slots, wrap long text and keep modal actions reachable. Check user text-spacing overrides without loss. |
+| Targets | Adopt 44×44 CSS px minimum interactive hit areas as a project design choice; preserve readable spacing between adjacent actions. |
+| Motion | Honour prefers-reduced-motion; remove optional transitions. Do not flash or animate task movement automatically. |
+| Pointer alternatives | Retain a status dropdown if drag-and-drop is added. No essential information or action appears only on hover. |
+
+Test full flows with keyboard only and with VoiceOver/Safari on macOS. Record browser/version, steps, results and fixes. Run an automated accessibility audit once screens exist, then manually verify interaction and announcements; automated results alone do not establish conformance.
+
+Sources: [WCAG 2.2 quick reference](https://www.w3.org/WAI/WCAG22/quickref/) and [WAI modal dialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/). The 44px target choice and the specific focus styling are project decisions.
