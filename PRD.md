@@ -311,7 +311,7 @@ All are **MVP**. Each group identifies its source, purpose and rules. Retain sta
 
 **Rationale:** Provide a usable first-run demonstration.
 
-**Data rules:** Seed 3–4 tasks only when there is no initialised dataset. An empty saved list remains empty. Seed task assignees match the configured names; all fields satisfy this schema.
+**Data rules:** Seed 3–4 fictional software-development tasks only when there is no initialised dataset. Give examples plausible descriptions, Markdown context and relative due dates so urgency states can be demonstrated. An empty saved list remains empty. Seed task assignees match the configured names; all fields satisfy this schema. An untouched first-release example dataset may be upgraded to the revised examples; edited or deleted task data must remain unchanged.
 
 ### DR-07 — Storage and integrity
 

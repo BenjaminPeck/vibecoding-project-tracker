@@ -1,4 +1,4 @@
-import { STAGES, TEAM, createExampleTasks } from './tasks.js';
+import { STAGES, TEAM, createExampleTasks, isLegacyExampleTasks } from './tasks.js';
 import { CONTEXT_TOOLS } from './context.js';
 export const TASK_KEY = 'vibetracker.tasks';
 export function validDate(value) {
@@ -17,7 +17,13 @@ export function validateTasks(tasks) {
 }
 export function loadTasks(storage) {
   const raw = storage.getItem(TASK_KEY);
-  if (raw !== null) return validateTasks(JSON.parse(raw));
+  if (raw !== null) {
+    const saved = validateTasks(JSON.parse(raw));
+    if (!isLegacyExampleTasks(saved)) return saved;
+    const refreshed = createExampleTasks();
+    try { saveTasks(storage, refreshed); return refreshed; }
+    catch { return saved; }
+  }
   const initial = createExampleTasks();
   saveTasks(storage, initial);
   return initial;

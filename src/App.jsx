@@ -1,11 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import Board from './components/Board';
 import TaskModal from './components/TaskModal';
+import DeliverablesBoard from './components/DeliverablesBoard';
 import { loadTasks, saveTasks } from './data/storage';
 import { createExampleTasks, TEAM } from './data/tasks';
+import { emptyDeliverables, loadDeliverables, saveDeliverables } from './data/deliverables';
 
 export default function App() {
   const [tasks, setTasks] = useState([]);
+  const [deliverables, setDeliverables] = useState([]);
+  const [deliverablesError, setDeliverablesError] = useState(false);
   const [loadError, setLoadError] = useState(false);
   const [ready, setReady] = useState(false);
   const [editing, setEditing] = useState(undefined);
@@ -16,6 +20,11 @@ export default function App() {
   function load() {
     try { setTasks(loadTasks(window.localStorage)); setLoadError(false); setReady(true); }
     catch { setLoadError(true); setReady(false); }
+    loadLinks();
+  }
+  function loadLinks() {
+    try { setDeliverables(loadDeliverables(window.localStorage)); setDeliverablesError(false); }
+    catch { setDeliverablesError(true); }
   }
   useEffect(load, []);
   useEffect(() => {
@@ -48,6 +57,16 @@ export default function App() {
     setTasks(nextTasks);
     setMessage(`“${task.title}” assigned to ${nextOwner}.`);
   }
+  function saveLink(id, url) {
+    const next = deliverables.map(slot => slot.id === id ? { ...slot, url } : slot);
+    saveDeliverables(window.localStorage, next);
+    setDeliverables(next);
+  }
+  function resetLinks() {
+    if (!window.confirm('Reset local deliverable links? This permanently removes this app’s saved links.')) return;
+    try { saveDeliverables(window.localStorage, emptyDeliverables()); loadLinks(); }
+    catch { setMessage('Could not reset deliverable links. Check browser storage settings and retry.'); }
+  }
   function reset() {
     if (!window.confirm('Reset local tasks? This permanently replaces this app’s saved tasks with examples.')) return;
     try { saveTasks(window.localStorage, createExampleTasks()); load(); }
@@ -67,6 +86,7 @@ export default function App() {
         </div>
       </header>
       <main id="board" tabIndex={-1} className="mx-auto max-w-[1600px] px-4 py-8 sm:px-6">
+        {deliverablesError ? <section aria-labelledby="deliverables-heading" className="mb-8 rounded-xl border border-border-control bg-white p-5"><h2 id="deliverables-heading" className="text-xl font-semibold">Could not load deliverable links</h2><p className="my-3 text-sm">Saved link data is unavailable or invalid. Nothing has been overwritten.</p><div className="flex flex-wrap gap-3"><button onClick={loadLinks} className="min-h-11 rounded-lg border border-border-control px-4">Retry links</button><button onClick={resetLinks} className="min-h-11 rounded-lg border border-border-control px-4 text-due-overdue">Reset local links</button></div></section> : deliverables.length > 0 && <DeliverablesBoard items={deliverables} onSave={saveLink} />}
         <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 className="text-xl font-semibold tracking-tight">Project board</h2>

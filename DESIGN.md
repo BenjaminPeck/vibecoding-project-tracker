@@ -21,6 +21,8 @@ Use 12px vertical header padding and 24px desktop horizontal padding. Use 24px o
 
 Use colour mainly for primary actions, small stage markers, type badges and urgency labels. Avoid decorative gradients, oversized hero sections and playful illustrations. Keep task information prominent, with modest corner radii, crisp separators and minimal shadows. Stage names remain visible so stage colour cannot be confused with urgency.
 
+Initial sample cards use plausible software-development work across feature, bug, review and completed states. Their names, reproduction notes and owners are fictional examples, not verified issues or research evidence. Relative dates show the urgency colours on first use without making the sample depend on a fixed assessment date.
+
 ## 2. Colour tokens
 
 All values are implemented in `tailwind.config.js`. Foreground tokens below are intended for text/icons on white or the matching pale surface. Border tokens are decorative separators, not the sole indication of an input or action.
