@@ -1,116 +1,36 @@
-import { useState, useEffect } from 'react';
-
-/**
- * Vibecoding Project Tracker — starter scaffold.
- *
- * This file is intentionally almost empty. The boilerplate (Vite, React,
- * Tailwind) is configured for you, plus a few shared constants and a
- * localStorage helper. Everything visible on screen, you build.
- *
- * Where to start (build sequence in Phase 3):
- *   - M4  data-model    : render the four columns and the task cards below.
- *   - M5  crud-modal    : add the "+" button modal and the edit-on-click modal.
- *   - M6  tag-style     : feature vs. bug color coding (uses DESIGN.md §2 colors).
- *   - M7  task-owner    : assignee badge + "Hand off to..." dropdown.
- *   - M8  due-tint      : color cards by due date (uses DESIGN.md §2 due-state colors).
- *   - M9  context       : a curated Context briefing field on the modal.
- *   - M10 copy-prompt   : a "Copy as Prompt Context" button that serializes the task + context.
- *   - M11 anchors       : the Anchor Board above the Kanban.
- *   - M12 secret-sauce  : the one open-ended thing that makes your tracker yours.
- *
- * Search the file for `TODO M<n>` to find the right hook for each milestone.
- */
-
-/**
- * @typedef {Object} Task
- * @property {string} id
- * @property {string} title
- * @property {string} description
- * @property {'feature'|'bug'} type
- * @property {'todo'|'in-progress'|'review'|'done'} status
- * @property {string} assignee
- * @property {string|null} dueDate     ISO 'YYYY-MM-DD'
- * @property {string} createdDate      ISO 'YYYY-MM-DD'
- */
-
-// The four columns of the board, in render order.
-// Use these IDs everywhere — do not invent new ones.
-export const STAGES = [
-  { id: 'todo',        label: 'To Do' },
-  { id: 'in-progress', label: 'In Progress' },
-  { id: 'review',      label: 'Review' },
-  { id: 'done',        label: 'Done' },
-];
-
-// Replace these placeholders with the three names from PRD §8 before M4.
-// They become the only valid values for `Task.assignee`.
-export const TEAM = ['Teammate A', 'Teammate B', 'Teammate C'];
-
-/**
- * A tiny localStorage hook — survives reloads, no library needed.
- *
- * Usage:
- *   const [tasks, setTasks] = useLocalStorage('vibetracker.tasks', []);
- */
-export function useLocalStorage(key, initialValue) {
-  const [value, setValue] = useState(() => {
-    try {
-      const raw = window.localStorage.getItem(key);
-      return raw != null ? JSON.parse(raw) : initialValue;
-    } catch {
-      return initialValue;
-    }
-  });
-
-  useEffect(() => {
-    try {
-      window.localStorage.setItem(key, JSON.stringify(value));
-    } catch {
-      /* quota or private-mode error — silently ignore for hackathon */
-    }
-  }, [key, value]);
-
-  return [value, setValue];
-}
+import { useState } from 'react';
+import Board from './components/Board';
+import { createExampleTasks, TEAM } from './data/tasks';
 
 export default function App() {
-  // TODO M4 data-model:
-  //   const [tasks, setTasks] = useLocalStorage('vibetracker.tasks', [/* 3-4 seed tasks */]);
-  //
-  // TODO M5 crud-modal:
-  //   const [editing, setEditing] = useState(null);
-  //
-  // TODO M11 anchors:
-  //   const [anchors, setAnchors] = useLocalStorage('vibetracker.anchors', [...]);
-
+  // M4 is a read-only board. Editing and persistent storage arrive together in M5.
+  const [tasks] = useState(createExampleTasks);
   return (
-    <div className="min-h-screen p-6">
-      <header className="mb-6 flex items-end justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900">
-            Vibecoding Project Tracker
-          </h1>
-          <p className="text-sm text-slate-500">
-            {/* Replace this line with your team name from PRD §11. */}
-            Team starter
-          </p>
+    <div className="min-h-screen">
+      <a href="#board" className="sr-only z-50 rounded-lg bg-brand-primary p-3 text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Skip to board</a>
+      <header className="border-b border-border-subtle bg-surface-card">
+        <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-4 px-4 py-6 sm:px-6">
+          <div className="min-w-0">
+            <div className="mb-2 flex items-center gap-2 text-sm font-medium text-brand-primary"><span aria-hidden="true" className="h-2 w-2 rounded-full bg-brand-primary" />Team workspace</div>
+            <h1 className="break-words text-2xl font-semibold tracking-tight">Vibecoding Project Tracker</h1>
+            <p className="mt-1 text-sm leading-6 text-text-muted">Tasks, context and deliverables for your team.</p>
+          </div>
+          <p className="rounded-full border border-border-subtle px-3 py-2 text-sm text-text-muted">Local prototype</p>
         </div>
       </header>
-
-      {/* TODO M11 anchors: render the Anchor Board (Presentation / Demo / Report / Documentation) above the board. */}
-
-      {/*
-        TODO M4 data-model:
-          Render a Kanban board with the four columns from STAGES.
-          Each column should display the tasks whose status matches its id.
-          Pre-populate 3-4 mock tasks so the board isn't empty on first load.
-
-        TODO M5 crud-modal:
-          Add a "+" button that opens a modal with every Task field.
-          Clicking a card should open the same modal in edit mode.
-      */}
-      <main className="flex h-64 items-center justify-center rounded-lg border-2 border-dashed border-slate-300 text-slate-400">
-        Build the four-column board here · M4
+      <main id="board" tabIndex={-1} className="mx-auto max-w-[1600px] px-4 py-8 sm:px-6">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-semibold tracking-tight">Project board</h2>
+            <p className="mt-1 text-sm text-text-muted">A shared view of what comes next.</p>
+          </div>
+          <p className="text-sm text-text-muted"><span className="font-semibold text-text-primary">{tasks.length}</span> tasks <span aria-hidden="true">·</span> {TEAM.length} demo members</p>
+        </div>
+        <Board tasks={tasks} />
+        <aside aria-label="Prototype information" className="mt-6 border-t border-border-subtle pt-4 text-sm leading-6 text-text-muted">
+          <p><strong className="font-medium text-text-primary">Example workspace.</strong> These tasks and team members are fictional.</p>
+          <p>This first version displays the board. Task editing and saving will be added next.</p>
+        </aside>
       </main>
     </div>
   );

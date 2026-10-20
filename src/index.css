@@ -9,3 +9,10 @@ html, body, #root {
 body {
   @apply bg-surface-page font-sans text-text-primary;
 }
+
+@layer base {
+  :focus-visible {
+    outline: 2px solid #4338CA;
+    outline-offset: 3px;
+  }
+}
