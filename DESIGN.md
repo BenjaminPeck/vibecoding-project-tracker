@@ -137,7 +137,7 @@ Use short, direct language that explains the result of an action.
 
 ## 6. Wordmark
 
-Product name: Vibecoding Project Tracker, matching the PRD.
+Product name: Vibecoding Project Tracker, matching the PRD title.
 Use the heading font at semibold weight in text-primary, with a small indigo accent alongside it. No custom logo is required. Plain typography keeps the header compact and leaves room for the board.
 
 ## 7. Design review checklist
