@@ -82,7 +82,7 @@ These describe what the team-facing prototype must do. **MVP** means required fo
 **Acceptance criteria**
 
 - Card shows initials/name.
-- Handoff dropdown uses all three configured team member names.
+- Handoff dropdown uses the current configured team members.
 - Reassignment updates the card, shows confirmation and persists.
 - The modal assignee change takes effect on Save task. A separate board handoff control, if provided, saves immediately and announces the new owner.
 - Selecting the current owner is a no-op. Handoff does not send notifications or change other task fields.
@@ -173,7 +173,7 @@ These bands use local calendar dates, not rolling 24-hour periods. State labels 
 **Acceptance criteria**
 
 - An explicitly labelled engineer selector offers every configured team member and All tasks.
-- Selecting an engineer shows only their tasks in the existing four status columns, ordered by due date within each column; undated tasks follow dated tasks.
+- Selecting an engineer shows only their tasks in the existing four status columns, using the current board order setting.
 - The board shows the visible count and an explicit Show all tasks action. A selected engineer with no work receives an informative empty state.
 - The selection survives reload in the same browser. If preference storage fails, the view still changes for the current page and explains that it will not be remembered.
 - Filtering does not alter saved task records, owners, or the local-only prototype model. Users can still edit tasks; the full board retains drag reordering.
@@ -189,6 +189,34 @@ These bands use local calendar dates, not rolling 24-hour periods. State labels 
 - A labelled, keyboard-operable switch reports its current on/off state and changes the whole interface, including the board and task modal.
 - The chosen mode survives reload in the same browser; if preference storage fails, the current page still changes and reports that the choice was not remembered.
 - Both modes retain readable text, visible focus, and text labels alongside type, deadline and status colours.
+
+### FR-13 — Prioritise and order tasks
+
+**Priority:** After MVP · **Status:** Defined
+
+**Requirement:** Let users set a task's priority and show higher-priority tasks first in each column by default.
+
+**Acceptance criteria**
+
+- The task modal offers High, Normal and Low in a labelled dropdown; new tasks default to Normal. The saved priority appears as text on the card.
+- Each column defaults to High, then Normal, then Low; tasks of equal priority use earliest due date first, with undated tasks last.
+- A labelled Order control offers Priority, Due date and Manual. Manual shows saved card order and enables dragging; clicking or keyboard-activating each card's labelled grip opens non-drag actions for reordering or changing columns. Sorted views do not present these manual controls.
+- The order choice survives reload in the same browser and applies within Focus View. Changing the view does not rewrite task records.
+- Existing saved tasks without a priority load as Normal without overwriting their stored records; invalid priority values are rejected.
+
+### FR-14 — Manage the local team roster
+
+**Priority:** After MVP
+
+**Requirement:** Add and remove team members so the task owner list reflects the current team.
+
+**Acceptance criteria**
+
+- A labelled Manage team dialog lists members and their assigned task counts, and accepts a unique member name and email address, plus an optional GitLab profile URL.
+- Member email and GitLab profile URL can be edited later. A saved GitLab URL opens the profile only; it does not import activity or authenticate the member.
+- Newly added members appear in the task assignee, card handoff and Focus View controls and remain after reload in the same browser.
+- A member with assigned tasks cannot be removed until those tasks are reassigned; at least one member remains.
+- Invalid names and failed browser writes show an error without reporting success. Managing members does not create accounts or share changes with another browser.
 
 ## 2. Non-functional requirements
 
@@ -272,7 +300,7 @@ These specify quality standards and technical constraints. All are **MVP**. WCAG
 
 ## 3. Data requirements
 
-All are **MVP**. Each group identifies its source, purpose and rules. Retain starter field names, particularly `createdDate`. No external data feed or AI API is required.
+DR-01–DR-07 are **MVP**; DR-08–DR-11 support later additions. Each group identifies its source, purpose and rules. Retain starter field names, particularly `createdDate`. No external data feed or AI API is required.
 
 ### DR-01 — Task identity and classification
 
@@ -288,11 +316,11 @@ All are **MVP**. Each group identifies its source, purpose and rules. Retain sta
 
 **Priority:** MVP
 
-**Source:** Three distinct configured team names; user selects owner.
+**Source:** Three fictional initial team names; user selects owner and may update the local roster.
 
 **Rationale:** Support team assignment and handoff.
 
-**Data rules:** Each task references exactly one configured name. Demo names are clearly fictional; developer identity does not determine task ownership. Account registration and team-management screens are not required.
+**Data rules:** Each task references exactly one current member name. Demo names are clearly fictional; developer identity does not determine task ownership. Account registration is not required.
 
 ### DR-03 — Task dates
 
@@ -360,7 +388,23 @@ All are **MVP**. Each group identifies its source, purpose and rules. Retain sta
 
 **Data rules:** Store `light` or `dark` in a separate browser-local key; absent or unrecognised values use light mode. This preference must not alter task or deliverable records.
 
-### Task field reference (DR-01–DR-04)
+### DR-10 — Task priority and order preference
+
+**Priority:** After MVP
+
+**Source:** Priority field and board Order control in FR-13.
+
+**Data rules:** Each task stores `high`, `normal` or `low`; legacy tasks without this field behave as `normal`. Store the selected order mode (`priority`, `due` or `manual`) separately from task records. Missing or unrecognised mode defaults to `priority`.
+
+### DR-11 — Local team roster
+
+**Priority:** After MVP
+
+**Source:** Manage team controls in FR-14.
+
+**Data rules:** Store an ordered list of unique, trimmed member names in a separate browser-local key, and contact details keyed by member name in another local key. Use three fictional names only when no roster has been saved; these examples may have blank contact details. New members require a valid email address; GitLab URL is optional and must point to an HTTPS gitlab.com profile. Keep at least one member, limit the roster to 50 members and names to 2–60 characters. Invalid saved data must not be silently overwritten. A task owner must be present in the current roster; removing a member who still owns tasks is disallowed.
+
+### Task field reference (DR-01–DR-04, DR-10)
 
 | Field | Type and validation | Source |
 |---|---|---|
@@ -368,6 +412,7 @@ All are **MVP**. Each group identifies its source, purpose and rules. Retain sta
 | `title` | Required trimmed, non-empty string | User input |
 | `description` | String; empty allowed | User input |
 | `type` | `feature` or `bug`; default `feature` | User selection |
+| `priority` | `high`, `normal` or `low`; default `normal` | User selection |
 | `status` | `todo`, `in-progress`, `review`, `done`; default `todo` | User selection |
 | `assignee` | Required string matching one of three configured team member names | User selection from team configuration |
 | `dueDate` | Valid ISO date `YYYY-MM-DD` or null | User input |

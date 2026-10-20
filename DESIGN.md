@@ -114,7 +114,7 @@ The separate “Copy Context” action on each card and in the task modal assemb
 
 ### Movement
 
-Cards can be dragged between columns and dropped before another card to change order. Highlight the active drop target and keep cards clickable for editing. The modal Status dropdown remains the non-drag route to change columns. A successful drop is announced; a failed browser-storage write keeps the original board and shows an error. Dragging is a board interaction, not the unresolved distinctive M12 feature.
+In Manual order on the full board, cards can be dragged between columns and dropped before another card to change order. Highlight the active drop target and keep cards clickable for editing. Clicking or keyboard-activating the labelled six-dot grip opens a compact menu with Move up, Move down and target-column options; this gives keyboard and simple-pointer users equivalent control without adding a persistent control to the card. The modal Status dropdown remains available. A successful move is announced; a failed browser-storage write keeps the original board and shows an error. Priority and Due date views hide drag and Move controls because their automatic order would obscure manual reordering. Dragging is a board interaction, separate from M12 Focus View.
 
 ## 5. Voice and microcopy
 
@@ -205,4 +205,16 @@ Long task titles wrap; long URLs and technical strings wrap without widening the
 
 ### Focus View
 
-Place a compact white filter row above the four board columns. Use a labelled native Engineer select with All tasks and the configured names. When filtered, show the selected engineer’s tasks by status and ascending due date, with a visible count and Show all tasks action. Keep the familiar stage surfaces and task cards, including editing and handoff. Hide drag grips while sorting by due date so manual reorder does not appear to fail. Save the chosen filter separately from task data in this browser; never imply authentication or shared team state. The select and reset action must be keyboard accessible and remain usable at narrow widths.
+Place a compact card-surface filter row above the four board columns. Use a labelled native Engineer select with All tasks and the configured names. When filtered, show the selected engineer’s tasks by status and the current order setting, with a visible count and Show all tasks action. Keep the familiar stage surfaces and task cards, including editing and handoff. Hide drag grips in Focus View because this view does not support manual reordering. Save the chosen filter separately from task data in this browser; never imply authentication or shared team state. The select and reset action must be keyboard accessible and remain usable at narrow widths.
+
+### Priority and board order
+
+Use a labelled High/Normal/Low dropdown in the task modal, defaulting to Normal. Show the saved priority as a small text badge beside Feature/Bug, using arrows only as supplementary cues. The compact filter row also has a labelled Order dropdown: Priority (default), Due date and Manual. Priority groups tasks High–Normal–Low within each stage, with due date resolving ties; Due date uses earliest first; Manual preserves saved card order and reveals drag grips with on-demand move options on the full board. The choice is a browser-local preference. Do not change task data when changing views, or suggest that dragging will reorder a sorted view.
+
+At 320 CSS pixels, the Engineer and Order controls wrap within the Focus View row rather than forcing horizontal page scrolling. The task and team dialogs remain independently scrollable, with actions reachable at that width.
+
+### Team management
+
+Place a Manage team button in the header. Its modal lists each member and assigned task count, offers labelled name/email fields and an optional GitLab profile URL, and disables Remove while that member owns tasks or is the only member. Existing member details can be edited; example members may have blank details. GitLab links open the profile in a new tab without integration. Explain that ownership can be changed from the card handoff menu or task editor. Roster edits persist in this browser and flow through the assignee, handoff and Focus View controls; they do not represent accounts or shared membership. Keep focus inside the native dialog and return it to Manage team on close.
+
+Use a two-level hierarchy in the team dialog: concise title and purpose in the header, a softly tinted add-member form, then compact member rows. Align name and email fields side by side when space allows, retain stacked fields on narrow screens, and put GitLab beneath them. Rows use initials, name/contact details, a task-count chip and quiet Edit/Remove actions. Keep disabled removal visually subdued while its reason remains available through the control tooltip. Use the existing theme tokens in both modes and keep 44px touch targets.

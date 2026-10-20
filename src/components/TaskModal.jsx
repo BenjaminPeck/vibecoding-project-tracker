@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { STAGES, TEAM } from '../data/tasks';
+import { STAGES } from '../data/tasks';
 import { localDate, validDate } from '../data/storage';
 import { CONTEXT_TEMPLATE, CONTEXT_TOOLS, contextUpdatedAt, relativeContextTime } from '../data/context';
 import { taskBriefing } from '../data/briefing';
@@ -7,7 +7,7 @@ import CopyFallback from './CopyFallback';
 import CopyIcon from './CopyIcon';
 const control = 'mt-1 min-h-11 w-full rounded-lg border border-border-control bg-surface-input px-3 py-2 text-sm';
 const secondary = 'min-h-11 rounded-lg border border-border-control px-4 py-2 text-sm font-medium';
-export default function TaskModal({ task, onClose, onSave, onDelete }) {
+export default function TaskModal({ task, members, onClose, onSave, onDelete }) {
   const dialog = useRef(null);
   const title = useRef(null);
   const cancelDelete = useRef(null);
@@ -15,7 +15,7 @@ export default function TaskModal({ task, onClose, onSave, onDelete }) {
   const briefingButton = useRef(null);
   const markdownTimer = useRef(null);
   const briefingTimer = useRef(null);
-  const [form, setForm] = useState(() => task || { title:'', description:'', type:'feature', status:'todo', assignee:TEAM[0], dueDate:'', context:'', contextTool:null });
+  const [form, setForm] = useState(() => task || { title:'', description:'', type:'feature', priority:'normal', status:'todo', assignee:members[0], dueDate:'', context:'', contextTool:null });
   const [clock, setClock] = useState(() => new Date());
   const [error, setError] = useState('');
   const [titleError, setTitleError] = useState(false);
@@ -82,8 +82,9 @@ export default function TaskModal({ task, onClose, onSave, onDelete }) {
         <div className="grid gap-4 sm:grid-cols-2">
           <div><label htmlFor="task-type" className="text-sm font-medium">Type</label><select id="task-type" name="type" value={form.type} onChange={change} className={control}><option value="feature">Feature</option><option value="bug">Bug</option></select><span aria-hidden="true" className={`mt-2 inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-semibold ${form.type === 'bug' ? 'bg-type-bug-soft text-type-bug' : 'bg-type-feature-soft text-type-feature'}`}>{form.type === 'bug' ? '!' : '◆'} {form.type === 'bug' ? 'Bug' : 'Feature'}</span></div>
           <div><label htmlFor="task-status" className="text-sm font-medium">Status</label><select id="task-status" name="status" value={form.status} onChange={change} className={control}>{STAGES.map(s => <option key={s.id} value={s.id}>{s.label}</option>)}</select></div>
-          <div><label htmlFor="task-assignee" className="text-sm font-medium">Assignee (required)</label><select id="task-assignee" name="assignee" value={form.assignee} onChange={change} required className={control}>{TEAM.map(name => <option key={name}>{name}</option>)}</select></div>
+          <div><label htmlFor="task-assignee" className="text-sm font-medium">Assignee (required)</label><select id="task-assignee" name="assignee" value={form.assignee} onChange={change} required className={control}>{members.map(name => <option key={name}>{name}</option>)}</select></div>
           <div><label htmlFor="task-due" className="text-sm font-medium">Due date (optional)</label><input id="task-due" type="date" name="dueDate" value={form.dueDate || ''} onChange={change} className={control} /></div>
+          <div><label htmlFor="task-priority" className="text-sm font-medium">Priority</label><select id="task-priority" name="priority" value={form.priority || 'normal'} onChange={change} className={control}><option value="high">High</option><option value="normal">Normal</option><option value="low">Low</option></select></div>
         </div>
         <section aria-labelledby="context-heading" className="rounded-xl border border-border-subtle bg-surface-column p-4">
           <div className="flex flex-wrap items-start justify-between gap-2">

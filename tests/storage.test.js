@@ -20,6 +20,21 @@ test('calendar validation rejects impossible dates',()=>{
  assert(validDate('2028-02-29'));assert(!validDate('2026-02-29'));assert(!validDate('2026-13-01'));assert(!validDate('bad'));
 });
 
+test('older saved tasks gain Normal priority without overwriting their original data',()=>{
+ const storage=memory();const tasks=loadTasks(storage);
+ const old=tasks.map(({priority,...task})=>task);
+ storage.raw=JSON.stringify(old);
+ const loaded=loadTasks(storage);
+ assert(loaded.every(task=>task.priority==='normal'));
+ assert.equal(storage.raw,JSON.stringify(old));
+ loaded[0].priority='high';saveTasks(storage,loaded);
+ assert.equal(loadTasks(storage)[0].priority,'high');
+ const invalid=JSON.parse(storage.raw);invalid[0].priority='urgent';
+ const invalidStorage=memory(JSON.stringify(invalid));
+ assert.throws(()=>loadTasks(invalidStorage));
+ assert.equal(invalidStorage.raw,JSON.stringify(invalid));
+});
+
 test('only untouched legacy sample tasks refresh to software-development examples', () => {
  const base={description:'',type:'feature',dueDate:null,createdDate:'2026-10-20',context:'',contextTool:null,contextUpdatedAt:null};
  const old=[
@@ -38,4 +53,7 @@ test('only untouched legacy sample tasks refresh to software-development example
  const editedStorage=memory(JSON.stringify(old));
  assert.equal(loadTasks(editedStorage)[0].description,'Personal edit');
  assert.equal(editedStorage.raw,JSON.stringify(old));
+ old[0].description='Keep the presentation, demo, report and documentation together.';
+ old[0].priority='high';
+ assert(!isLegacyExampleTasks(old));
 });
