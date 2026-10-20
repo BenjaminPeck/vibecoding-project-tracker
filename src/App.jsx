@@ -28,6 +28,14 @@ export default function App() {
   }
   function save(task) { commit(editing ? tasks.map(t => t.id === task.id ? task : t) : [...tasks, task], 'Task saved.'); }
   function remove(id) { commit(tasks.filter(t => t.id !== id), 'Task deleted.'); }
+  function handoff(id, nextOwner) {
+    const task = tasks.find(t => t.id === id);
+    if (!task || task.assignee === nextOwner || !TEAM.includes(nextOwner)) return;
+    const nextTasks = tasks.map(t => t.id === id ? { ...t, assignee: nextOwner } : t);
+    saveTasks(window.localStorage, nextTasks);
+    setTasks(nextTasks);
+    setMessage(`“${task.title}” assigned to ${nextOwner}.`);
+  }
   function reset() {
     if (!window.confirm('Reset local tasks? This permanently replaces this app’s saved tasks with examples.')) return;
     try { saveTasks(window.localStorage, createExampleTasks()); load(); }
@@ -55,7 +63,7 @@ export default function App() {
           <p className="text-sm text-text-muted"><span className="font-semibold text-text-primary">{tasks.length}</span> tasks <span aria-hidden="true">·</span> {TEAM.length} demo members</p>
         </div>
         <p role="status" className="mb-3 text-sm text-text-muted">{message}</p>
-        {loadError ? <div role="alert" className="rounded-lg border border-border-control bg-white p-5"><h3 className="font-semibold">Could not load saved tasks</h3><p className="my-3">Browser storage is unavailable or contains invalid data. Nothing has been overwritten.</p><div className="flex flex-wrap gap-3"><button onClick={load} className="min-h-11 rounded border border-border-control px-4">Retry</button><button onClick={reset} className="min-h-11 rounded border border-border-control px-4 text-due-overdue">Reset local tasks</button></div></div> : ready ? <Board tasks={tasks} onEdit={open} /> : <p>Loading tasks…</p>}
+        {loadError ? <div role="alert" className="rounded-lg border border-border-control bg-white p-5"><h3 className="font-semibold">Could not load saved tasks</h3><p className="my-3">Browser storage is unavailable or contains invalid data. Nothing has been overwritten.</p><div className="flex flex-wrap gap-3"><button onClick={load} className="min-h-11 rounded border border-border-control px-4">Retry</button><button onClick={reset} className="min-h-11 rounded border border-border-control px-4 text-due-overdue">Reset local tasks</button></div></div> : ready ? <Board tasks={tasks} onEdit={open} onHandoff={handoff} /> : <p>Loading tasks…</p>}
         <aside aria-label="Prototype information" className="mt-6 border-t border-border-subtle pt-4 text-sm leading-6 text-text-muted">
           <p><strong className="font-medium text-text-primary">Example workspace.</strong> The initial tasks and team members are fictional.</p>
           <p>Saved in this browser. Changes are not shared across devices.</p>

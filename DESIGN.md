@@ -92,7 +92,7 @@ Centre a white modal up to 640px wide over a dark translucent backdrop. Limit he
 
 ### Ownership and handoff
 
-Show a restrained initials badge beside each configured team member name; avoid oversized avatars or decorative profile illustrations. The modal assignee control is saved with Save task. A board-level “Hand off to…” control saves immediately and shows a confirmation; choosing the existing owner does nothing. This changes browser-local task data; do not imply that a teammate has received a notification.
+Show a restrained initials badge beside each configured team member name; avoid oversized avatars or decorative profile illustrations. The avatar, name and chevron form one compact disclosure control. Activating it reveals other team members under “Hand off to…”. Escape or clicking elsewhere closes the choices, and focus returns to the owner control after a selection. The modal assignee control is saved with Save task. Selecting a different owner from the card saves immediately and shows a confirmation. This changes browser-local task data; do not imply that a teammate has received a notification.
 
 ### Deliverable slots
 
