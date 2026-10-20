@@ -16,9 +16,10 @@ export default function TaskModal({ task, onClose, onSave, onDelete }) {
   function change(e) { setForm({ ...form, [e.target.name]:e.target.value }); }
   function save(e) {
     e.preventDefault(); setError(''); setTitleError(false);
+    const dueDate = e.currentTarget.elements.namedItem('dueDate').value;
     if (!form.title.trim()) { setTitleError(true); title.current.focus(); return; }
-    if (form.dueDate && !validDate(form.dueDate)) { setError('Enter a valid due date.'); return; }
-    const next = { ...form, title:form.title.trim(), dueDate:form.dueDate || null, id:task?.id || crypto.randomUUID(), createdDate:task?.createdDate || localDate(), context:task?.context || '', contextTool:task?.contextTool || null, contextUpdatedAt:task?.contextUpdatedAt || null };
+    if (dueDate && !validDate(dueDate)) { setError('Enter a valid due date.'); return; }
+    const next = { ...form, title:form.title.trim(), dueDate:dueDate || null, id:task?.id || crypto.randomUUID(), createdDate:task?.createdDate || localDate(), context:task?.context || '', contextTool:task?.contextTool || null, contextUpdatedAt:task?.contextUpdatedAt || null };
     try { onSave(next); } catch { setError("Couldn't save in this browser. Your changes are still here. Check storage settings and try Save task again."); }
   }
   function remove() { try { onDelete(task.id); } catch { setError("Couldn't delete this task. It has not been removed. Check storage settings and try again."); } }

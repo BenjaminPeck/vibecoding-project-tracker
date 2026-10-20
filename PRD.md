@@ -94,12 +94,12 @@ These describe what the team-facing prototype must do. **MVP** means required fo
 
 **Acceptance criteria**
 
-- Calm, warning, overdue and neutral are distinguishable.
+- Green, yellow, red and neutral deadline states are distinguishable by text as well as colour; overdue dates are red with a visible `!!` marker.
 - Done overrides urgency.
 - States update while the board remains open without editing a task.
 - Use the proposed deadline rules below. Recalculate at least once per minute and when returning to the browser tab.
 
-#### FR-07 deadline rules — proposed defaults
+#### FR-07 deadline rules
 
 Interpret a date-only due date as the final instant before the following local calendar day. Test exact boundaries rather than parsing it as UTC midnight.
 
@@ -107,11 +107,12 @@ Interpret a date-only due date as the final instant before the following local c
 |---|---|
 | Task is Done | Neutral |
 | No due date | Neutral |
-| Current time is after the deadline | Overdue |
-| Deadline is now or within the next 24 hours, inclusive | Warning |
-| Deadline is more than 24 hours away | Calm |
+| Due date is before today | Red, overdue with `!!` |
+| Due today or tomorrow | Red |
+| Due in two calendar days | Yellow |
+| Due in three or more calendar days | Green |
 
-The calm 24–48-hour interval and local-day interpretation close gaps in the brief and remain proposed for review. State labels accompany colours; date changes need no manual refresh.
+These bands use local calendar dates, not rolling 24-hour periods. State labels accompany colours; date changes need no manual refresh.
 
 ### FR-08 — Store Markdown context and selected AI tool
 

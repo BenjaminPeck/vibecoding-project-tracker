@@ -10,6 +10,7 @@ export default function App() {
   const [ready, setReady] = useState(false);
   const [editing, setEditing] = useState(undefined);
   const [message, setMessage] = useState('');
+  const [now, setNow] = useState(() => new Date());
   const opener = useRef(null);
   const addButton = useRef(null);
   function load() {
@@ -17,6 +18,17 @@ export default function App() {
     catch { setLoadError(true); setReady(false); }
   }
   useEffect(load, []);
+  useEffect(() => {
+    const refresh = () => setNow(new Date());
+    const timer = window.setInterval(refresh, 60_000);
+    document.addEventListener('visibilitychange', refresh);
+    window.addEventListener('focus', refresh);
+    return () => {
+      window.clearInterval(timer);
+      document.removeEventListener('visibilitychange', refresh);
+      window.removeEventListener('focus', refresh);
+    };
+  }, []);
   function open(task) { opener.current = document.activeElement; setEditing(task); }
   function close() {
     setEditing(undefined);
@@ -63,7 +75,7 @@ export default function App() {
           <p className="text-sm text-text-muted"><span className="font-semibold text-text-primary">{tasks.length}</span> tasks <span aria-hidden="true">·</span> {TEAM.length} demo members</p>
         </div>
         <p role="status" className="mb-3 text-sm text-text-muted">{message}</p>
-        {loadError ? <div role="alert" className="rounded-lg border border-border-control bg-white p-5"><h3 className="font-semibold">Could not load saved tasks</h3><p className="my-3">Browser storage is unavailable or contains invalid data. Nothing has been overwritten.</p><div className="flex flex-wrap gap-3"><button onClick={load} className="min-h-11 rounded border border-border-control px-4">Retry</button><button onClick={reset} className="min-h-11 rounded border border-border-control px-4 text-due-overdue">Reset local tasks</button></div></div> : ready ? <Board tasks={tasks} onEdit={open} onHandoff={handoff} /> : <p>Loading tasks…</p>}
+        {loadError ? <div role="alert" className="rounded-lg border border-border-control bg-white p-5"><h3 className="font-semibold">Could not load saved tasks</h3><p className="my-3">Browser storage is unavailable or contains invalid data. Nothing has been overwritten.</p><div className="flex flex-wrap gap-3"><button onClick={load} className="min-h-11 rounded border border-border-control px-4">Retry</button><button onClick={reset} className="min-h-11 rounded border border-border-control px-4 text-due-overdue">Reset local tasks</button></div></div> : ready ? <Board tasks={tasks} onEdit={open} onHandoff={handoff} now={now} /> : <p>Loading tasks…</p>}
         <aside aria-label="Prototype information" className="mt-6 border-t border-border-subtle pt-4 text-sm leading-6 text-text-muted">
           <p><strong className="font-medium text-text-primary">Example workspace.</strong> The initial tasks and team members are fictional.</p>
           <p>Saved in this browser. Changes are not shared across devices.</p>

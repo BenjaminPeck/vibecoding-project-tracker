@@ -47,16 +47,16 @@ All values are implemented in `tailwind.config.js`. Foreground tokens below are 
 | type-bug-soft | #FCE7F3 | Bug label background |
 | due-safe | #166534 | Calm due-date text/icon |
 | due-safe-soft | #F0FDF4 | Calm due-date background |
-| due-warning | #854D0E | Due within 24 hours |
+| due-warning | #854D0E | Yellow: due in two calendar days |
 | due-warning-soft | #FEF9C3 | Warning date background |
-| due-overdue | #991B1B | Overdue text/icon and destructive actions |
+| due-overdue | #991B1B | Red: due today/tomorrow, overdue with `!!`, and destructive actions |
 | due-overdue-soft | #FEE2E2 | Overdue date background |
 | due-neutral | #475569 | Done or no due date |
 | due-neutral-soft | #F1F5F9 | Neutral date background |
 
 Task type is shown with a labelled badge/icon and a 3px left accent. Urgency uses the separate due-date label and its pale background. Keep the rest of the card white so the two meanings do not compete.
 
-Proposed due-state boundaries follow PRD FR-07: Done always neutral; no date neutral; past due overdue; next 24 hours inclusive warning; later calm, including the 24–48-hour interval. Date-only deadlines end immediately before the following local day. Recalculate at least once per minute and on tab focus.
+Due-state boundaries follow PRD FR-07: Done always neutral; no date neutral; past due red with `!!`; today/tomorrow red; two calendar days away yellow; three or more calendar days away green. Date-only deadlines end immediately before the following local day. Recalculate at least once per minute and on tab focus.
 
 ## 3. Typography
 
