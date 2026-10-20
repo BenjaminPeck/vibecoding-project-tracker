@@ -49,6 +49,7 @@ These describe what the team-facing prototype must do. **MVP** means required fo
 - Modal dropdown supports all four states.
 - Saving moves the existing card without duplication.
 - Changing status in the modal takes effect only on Save task; Cancel leaves the original column unchanged.
+- Dragging a card to another column changes its saved status; dropping before a card can reorder within a column. A storage failure leaves the original status/order unchanged and shows an error. The modal Status dropdown remains available without dragging.
 
 ### FR-04 — Persist tasks and anchors
 
@@ -163,11 +164,31 @@ These bands use local calendar dates, not rolling 24-hour periods. State labels 
 
 ### FR-11 — Add one distinctive interaction
 
-**Priority:** After MVP · **Status:** Unresolved
+**Priority:** After MVP · **Status:** Defined for M12
 
-**Requirement:** Provide one distinctive interaction that supports the team’s engineering workflow (M12).
+**Requirement:** Provide a Focus View that filters the board to one selected engineer’s tasks without changing task ownership or hiding the route back to the full board (M12).
 
-The interaction, its justification and measurable acceptance criteria must be chosen before implementation. No specific feature is approved by this placeholder. It must remain usable with a keyboard and preserve existing task data.
+**Rationale:** An engineer needs a quick view of their own work while the team board remains available.
+
+**Acceptance criteria**
+
+- An explicitly labelled engineer selector offers every configured team member and All tasks.
+- Selecting an engineer shows only their tasks in the existing four status columns, ordered by due date within each column; undated tasks follow dated tasks.
+- The board shows the visible count and an explicit Show all tasks action. A selected engineer with no work receives an informative empty state.
+- The selection survives reload in the same browser. If preference storage fails, the view still changes for the current page and explains that it will not be remembered.
+- Filtering does not alter saved task records, owners, or the local-only prototype model. Users can still edit tasks; the full board retains drag reordering.
+
+### FR-12 — Switch between light and dark modes
+
+**Priority:** After MVP · **Status:** Defined
+
+**Requirement:** Let a user switch the interface between the existing light theme and a dark theme from the top-right header without changing their task data.
+
+**Acceptance criteria**
+
+- A labelled, keyboard-operable switch reports its current on/off state and changes the whole interface, including the board and task modal.
+- The chosen mode survives reload in the same browser; if preference storage fails, the current page still changes and reports that the choice was not remembered.
+- Both modes retain readable text, visible focus, and text labels alongside type, deadline and status colours.
 
 ## 2. Non-functional requirements
 
@@ -322,6 +343,22 @@ All are **MVP**. Each group identifies its source, purpose and rules. Retain sta
 **Rationale:** Preserve records without silently losing user data.
 
 **Data rules:** Restore saved field values on the same origin/browser profile. Validate types, required values, enum membership, unique task IDs and exact anchor slots. Reject malformed records through NFR-05 recovery; do not overwrite them with examples. Browser-cleared data cannot be recovered automatically. No cross-device sync or backup is provided.
+
+### DR-08 — Focus View preference
+
+**Priority:** After MVP
+
+**Source:** Engineer selection in FR-11.
+
+**Data rules:** Store only the selected configured team-member name in a separate browser-local key. An absent or unrecognised value means All tasks. Clearing the filter removes this preference without editing task records.
+
+### DR-09 — Theme preference
+
+**Priority:** After MVP
+
+**Source:** Header theme switch in FR-12.
+
+**Data rules:** Store `light` or `dark` in a separate browser-local key; absent or unrecognised values use light mode. This preference must not alter task or deliverable records.
 
 ### Task field reference (DR-01–DR-04)
 

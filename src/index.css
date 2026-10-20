@@ -2,6 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  color-scheme: light;
+  --brand-primary: #4338CA;
+  --brand-accent: #3730A3;
+  --brand-link: #4338CA;
+  --surface-page: #F8F7F4;
+  --surface-card: #FFFFFF;
+  --surface-input: #FFFFFF;
+  --surface-column: #F0EFEB;
+  --surface-hover: #E8E6F2;
+  --text-primary: #24232B;
+  --text-muted: #625F6B;
+  --border-subtle: #DEDCE2;
+  --border-control: #807B89;
+  --stage-todo: #EDE9FE;
+  --stage-progress: #DBEAFE;
+  --stage-review: #FEF3C7;
+  --stage-done: #DCFCE7;
+  --type-feature: #5B21B6;
+  --type-feature-soft: #F3E8FF;
+  --type-bug: #9D174D;
+  --type-bug-soft: #FCE7F3;
+  --due-safe: #166534;
+  --due-safe-soft: #F0FDF4;
+  --due-warning: #854D0E;
+  --due-warning-soft: #FEF9C3;
+  --due-overdue: #991B1B;
+  --due-overdue-soft: #FEE2E2;
+  --due-neutral: #475569;
+  --due-neutral-soft: #F1F5F9;
+}
+
+:root.dark {
+  color-scheme: dark;
+  --brand-primary: #5144C7;
+  --brand-accent: #4135AD;
+  --brand-link: #B8B2FF;
+  --surface-page: #171820;
+  --surface-card: #23242F;
+  --surface-input: #1C1D27;
+  --surface-column: #1E202A;
+  --surface-hover: #34344A;
+  --text-primary: #F4F1F8;
+  --text-muted: #C3BFCD;
+  --border-subtle: #444451;
+  --border-control: #918C9F;
+  --stage-todo: #332B4B;
+  --stage-progress: #24374D;
+  --stage-review: #493B24;
+  --stage-done: #244338;
+  --type-feature: #D2B9FF;
+  --type-feature-soft: #3B2A59;
+  --type-bug: #FFB8D0;
+  --type-bug-soft: #53283C;
+  --due-safe: #B2F5C8;
+  --due-safe-soft: #244336;
+  --due-warning: #FFE4A3;
+  --due-warning-soft: #4B3A22;
+  --due-overdue: #FFB8B8;
+  --due-overdue-soft: #522B32;
+  --due-neutral: #CBD5E1;
+  --due-neutral-soft: #374151;
+}
+
 html, body, #root {
   height: 100%;
 }
@@ -10,9 +74,12 @@ body {
   @apply bg-surface-page font-sans text-text-primary;
 }
 
+input, select, textarea, dialog { color: var(--text-primary); }
+input::placeholder, textarea::placeholder { color: var(--text-muted); opacity: 1; }
+
 @layer base {
   :focus-visible {
-    outline: 2px solid #4338CA;
+    outline: 2px solid var(--brand-link);
     outline-offset: 3px;
   }
 }

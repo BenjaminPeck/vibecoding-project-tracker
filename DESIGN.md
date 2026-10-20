@@ -25,7 +25,7 @@ Initial sample cards use plausible software-development work across feature, bug
 
 ## 2. Colour tokens
 
-All values are implemented in `tailwind.config.js`. Foreground tokens below are intended for text/icons on white or the matching pale surface. Border tokens are decorative separators, not the sole indication of an input or action.
+The light values below are CSS custom properties used by `tailwind.config.js`; a parallel dark palette overrides them on the root element. Foreground tokens are intended for text/icons on the matching surface. Border tokens are decorative separators, not the sole indication of an input or action.
 
 | Token | Hex | Use |
 |---|---|---|
@@ -114,7 +114,7 @@ The separate “Copy Context” action on each card and in the task modal assemb
 
 ### Movement
 
-Use the status dropdown for moving tasks. Do not show drag handles or grabbing cursors unless drag-and-drop is deliberately selected and implemented later. The distinctive feature remains a PRD decision.
+Cards can be dragged between columns and dropped before another card to change order. Highlight the active drop target and keep cards clickable for editing. The modal Status dropdown remains the non-drag route to change columns. A successful drop is announced; a failed browser-storage write keeps the original board and shows an error. Dragging is a board interaction, not the unresolved distinctive M12 feature.
 
 ## 5. Voice and microcopy
 
@@ -156,7 +156,7 @@ Use the heading font at semibold weight in text-primary, with a small indigo acc
 - UI wording accurately describes localStorage without claiming live collaboration.
 - Review rendered screens during later implementation; this document alone does not validate the final UI.
 
-Out of scope: dark mode, theme switching, custom icon artwork, elaborate animation and a database. Design documentation does not mark the board, modal or other build milestones complete.
+Dark mode was added later at Benjamin's request (FR-12). Keep the light palette as the default, with a compact header switch that has a visible label and accessible switch state. The dark palette uses charcoal page/cards, muted lavender/blue/amber/sage stages, and brighter text/badge tones while retaining the same information hierarchy. Apply it to fields, dialogs, menus, errors and empty states, not only the board background. Save the preference separately in this browser; the switch never modifies project data. Custom icon artwork, elaborate animation and a database remain out of scope. Design documentation does not mark the board, modal or other build milestones complete.
 
 
 ## 8. Accessibility acceptance plan
@@ -201,4 +201,8 @@ On clipboard failure expose a labelled read-only textarea containing the complet
 
 On invalid stored data, show a persistent explanation with Retry and an explicit Reset local data option. Reset opens a confirmation describing the loss, defaults focus to Cancel and only clears this app's keys. Never silently replace existing data with demo tasks. A retry must not discard unsaved form input. This is the recovery specified in NFR-05/DR-07, not a backup facility.
 
-Long task titles wrap; long URLs and technical strings wrap without widening the page. No action depends on hover. Do not add disabled placeholder controls for features that have not been built. The distinctive feature FR-11 remains open and has no approved design yet.
+Long task titles wrap; long URLs and technical strings wrap without widening the page. No action depends on hover. Do not add disabled placeholder controls for features that have not been built.
+
+### Focus View
+
+Place a compact white filter row above the four board columns. Use a labelled native Engineer select with All tasks and the configured names. When filtered, show the selected engineer’s tasks by status and ascending due date, with a visible count and Show all tasks action. Keep the familiar stage surfaces and task cards, including editing and handoff. Hide drag grips while sorting by due date so manual reorder does not appear to fail. Save the chosen filter separately from task data in this browser; never imply authentication or shared team state. The select and reset action must be keyboard accessible and remain usable at narrow widths.

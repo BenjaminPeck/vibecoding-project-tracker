@@ -5,7 +5,7 @@ import { CONTEXT_TEMPLATE, CONTEXT_TOOLS, contextUpdatedAt, relativeContextTime 
 import { taskBriefing } from '../data/briefing';
 import CopyFallback from './CopyFallback';
 import CopyIcon from './CopyIcon';
-const control = 'mt-1 min-h-11 w-full rounded-lg border border-border-control bg-white px-3 py-2 text-sm';
+const control = 'mt-1 min-h-11 w-full rounded-lg border border-border-control bg-surface-input px-3 py-2 text-sm';
 const secondary = 'min-h-11 rounded-lg border border-border-control px-4 py-2 text-sm font-medium';
 export default function TaskModal({ task, onClose, onSave, onDelete }) {
   const dialog = useRef(null);
@@ -67,12 +67,12 @@ export default function TaskModal({ task, onClose, onSave, onDelete }) {
     try { onSave(next); } catch { setError("Couldn't save in this browser. Your changes are still here. Check storage settings and try Save task again."); }
   }
   function remove() { try { onDelete(task.id); } catch { setError("Couldn't delete this task. It has not been removed. Check storage settings and try again."); } }
-  return <dialog ref={dialog} aria-labelledby="modal-title" onCancel={e => { e.preventDefault(); onClose(); }} className="m-auto max-h-[85vh] w-[calc(100%-2rem)] max-w-[640px] overflow-y-auto rounded-xl bg-white p-0 text-text-primary shadow-xl backdrop:bg-black/40">
+  return <dialog ref={dialog} aria-labelledby="modal-title" onCancel={e => { e.preventDefault(); onClose(); }} className="m-auto max-h-[85vh] w-[calc(100%-2rem)] max-w-[640px] overflow-y-auto rounded-xl bg-surface-card p-0 text-text-primary shadow-xl backdrop:bg-black/60">
     {deleting ? <div className="p-6">
       <h2 id="modal-title" className="text-xl font-semibold">Delete task?</h2>
       <p className="my-4 break-words">Delete “{task.title}”? This cannot be undone.</p>
       {error && <p role="alert" className="mb-4 text-due-overdue">{error}</p>}
-      <div className="flex flex-wrap justify-end gap-3"><button ref={cancelDelete} className={secondary} onClick={() => {setDeleting(false);setError('');}}>Cancel</button><button className="min-h-11 rounded-lg bg-due-overdue px-4 py-2 text-white" onClick={remove}>Delete task</button></div>
+      <div className="flex flex-wrap justify-end gap-3"><button ref={cancelDelete} className={secondary} onClick={() => {setDeleting(false);setError('');}}>Cancel</button><button className="min-h-11 rounded-lg bg-danger-button px-4 py-2 text-white" onClick={remove}>Delete task</button></div>
     </div> : <form onSubmit={save} noValidate className="p-4 sm:p-6">
       <div className="flex items-center justify-between gap-3"><h2 id="modal-title" className="text-xl font-semibold">{task ? 'Edit task' : 'Add task'}</h2><button type="button" onClick={onClose} className={secondary}>Close</button></div>
       <p className="mt-2 text-sm text-text-muted">Changes are saved when you select Save task. Title and assignee are required.</p>
@@ -93,7 +93,7 @@ export default function TaskModal({ task, onClose, onSave, onDelete }) {
           <label htmlFor="task-context" className="mt-4 block text-sm font-medium">Context (Markdown)</label>
           <div className="relative">
             <textarea ref={contextInput} id="task-context" name="context" value={form.context} onChange={change} rows={9} spellCheck={false} className={`${control} resize-y pr-14 font-mono leading-6`} />
-            <button type="button" disabled={!form.context} onClick={copyContext} aria-label="Copy Markdown" title="Copy Markdown" className="absolute right-2 top-3 flex h-11 w-11 items-center justify-center rounded-lg border border-border-subtle bg-white text-text-primary shadow-sm hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary disabled:cursor-not-allowed disabled:opacity-50">
+            <button type="button" disabled={!form.context} onClick={copyContext} aria-label="Copy Markdown" title="Copy Markdown" className="absolute right-2 top-3 flex h-11 w-11 items-center justify-center rounded-lg border border-border-subtle bg-surface-card text-text-primary shadow-sm hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-link disabled:cursor-not-allowed disabled:opacity-50">
               <CopyIcon copied={markdownCopied} size={19} />
             </button>
             <span role="status" className="sr-only">{markdownCopied ? 'Markdown copied.' : ''}</span>
@@ -109,7 +109,7 @@ export default function TaskModal({ task, onClose, onSave, onDelete }) {
       {briefingFallback && <CopyFallback text={briefingFallback} onClose={() => { setBriefingFallback(''); briefingButton.current?.focus(); }} />}
       <div className="mt-6 flex flex-wrap items-center gap-3 border-t border-border-subtle pt-4">
         {task && <button type="button" onClick={() => {setDeleting(true);setError('');}} className={`${secondary} text-due-overdue`}>Delete task</button>}
-        <button ref={briefingButton} type="button" onClick={copyTask} className={`${secondary} inline-flex items-center gap-2 text-brand-primary`}><CopyIcon copied={briefingCopied} size={16} />Copy Context</button>
+        <button ref={briefingButton} type="button" onClick={copyTask} className={`${secondary} inline-flex items-center gap-2 text-brand-link`}><CopyIcon copied={briefingCopied} size={16} />Copy Context</button>
         <div className="ml-auto flex flex-wrap gap-3"><button type="button" onClick={onClose} className={secondary}>Cancel</button><button type="submit" className="min-h-11 rounded-lg bg-brand-primary px-4 py-2 font-medium text-white hover:bg-brand-accent">Save task</button></div>
       </div>
     </form>}
