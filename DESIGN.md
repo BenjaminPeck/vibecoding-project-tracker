@@ -56,7 +56,7 @@ All values are implemented in `tailwind.config.js`. Foreground tokens below are 
 
 Task type is shown with a labelled badge/icon and a 3px left accent. Urgency uses the separate due-date label and its pale background. Keep the rest of the card white so the two meanings do not compete.
 
-Due-state boundaries follow the PRD: Done always neutral; no date neutral; past due overdue; next 24 hours inclusive warning; later calm, including the 24–48-hour interval. Date-only deadlines end at local 23:59:59.
+Proposed due-state boundaries follow PRD FR-07: Done always neutral; no date neutral; past due overdue; next 24 hours inclusive warning; later calm, including the 24–48-hour interval. Date-only deadlines end immediately before the following local day. Recalculate at least once per minute and on tab focus.
 
 ## 3. Typography
 
@@ -88,11 +88,11 @@ Primary buttons have indigo fill, white text, 8px radius and at least 44px heigh
 
 ### Task modal
 
-Centre a white modal up to 640px wide over a dark translucent backdrop. Limit height to 85vh and scroll its content. Show title and description first, then task type/status/assignee/due date, then Context, AI tool and its update time. Keep Save task and Cancel accessible in the footer, with Delete task separated on the left for existing tasks. Use visible labels, adjacent error text, focus containment, Escape dismissal and focus return to the opener. Cancel closes without saving.
+Centre a white modal up to 640px wide over a dark translucent backdrop. Limit height to 85vh and scroll its content. Show title and description first, then task type/status/assignee/due date, then Context, AI tool and its update time. Keep Save task and Cancel accessible in the footer, with Delete task separated on the left for existing tasks. Use visible labels, adjacent error text, focus containment, Escape dismissal and focus return to the opener. Cancel, Escape and the close button discard unsaved edits. Backdrop clicks leave the modal open. Show a short “Changes are saved when you select Save task” hint. Keep entered values if saving fails.
 
 ### Ownership and handoff
 
-Show a restrained initials badge beside each configured team member name; avoid oversized avatars or decorative profile illustrations. “Hand off to…” changes the assignee and shows a confirmation. This changes browser-local task data; do not imply that a teammate has received a notification.
+Show a restrained initials badge beside each configured team member name; avoid oversized avatars or decorative profile illustrations. The modal assignee control is saved with Save task. A board-level “Hand off to…” control saves immediately and shows a confirmation; choosing the existing owner does nothing. This changes browser-local task data; do not imply that a teammate has received a notification.
 
 ### Deliverable slots
 
@@ -174,3 +174,25 @@ Target WCAG 2.2 Level AA across the finished prototype. This is a design target,
 Test full flows with keyboard only and with VoiceOver/Safari on macOS. Record browser/version, steps, results and fixes. Run an automated accessibility audit once screens exist, then manually verify interaction and announcements; automated results alone do not establish conformance.
 
 Sources: [WCAG 2.2 quick reference](https://www.w3.org/WAI/WCAG22/quickref/) and [WAI modal dialog pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/). The 44px target choice and the specific focus styling are project decisions.
+
+
+## 9. Interaction states and requirement mapping
+
+These states complete the existing design; they are not new product features.
+
+| Surface | Required states / behaviour | Requirements |
+|---|---|---|
+| Board | First-use examples, populated columns, empty columns, empty board, storage read error | FR-01, FR-04; DR-06, DR-07 |
+| Task form | Create, edit, invalid input, unsaved changes, failed save with retained input, successful save | FR-02, FR-03; NFR-05 |
+| Delete | Name the task, focus Cancel, explicit confirmation; do not remove the task if persistence fails | FR-02; NFR-02, NFR-05 |
+| Ownership | Show name and initials; announce only a successfully saved reassignment | FR-06; DR-02 |
+| Urgency | Text plus colour for calm/warning/overdue/neutral, Done override and no-date label | FR-07 |
+| Context | Empty/template, edited, saved timestamp, unchanged timestamp on unrelated edits | FR-08; DR-04 |
+| Clipboard | Saved card values versus displayed modal values, successful copy, manual-copy fallback | FR-09 |
+| Anchors | No link, draft URL, invalid URL, saved link, cleared link and failed save | FR-10; DR-05 |
+
+On clipboard failure expose a labelled read-only textarea containing the complete generated briefing, with a Close action. Let the user select and copy it without losing task edits. Give this fallback appropriate dialog/focus behaviour if it is displayed as a modal.
+
+On invalid stored data, show a persistent explanation with Retry and an explicit Reset local data option. Reset opens a confirmation describing the loss, defaults focus to Cancel and only clears this app's keys. Never silently replace existing data with demo tasks. A retry must not discard unsaved form input. This is the recovery specified in NFR-05/DR-07, not a backup facility.
+
+Long task titles wrap; long URLs and technical strings wrap without widening the page. No action depends on hover. Do not add disabled placeholder controls for features that have not been built. The distinctive feature FR-11 remains open and has no approved design yet.

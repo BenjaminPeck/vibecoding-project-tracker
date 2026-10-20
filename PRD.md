@@ -2,66 +2,326 @@
 
 ## 1. Functional requirements
 
-MVP requirements are required for the minimum viable prototype. FR-11 is required after the MVP, but its specific behaviour remains to be defined.
+These describe what the team-facing prototype must do. **MVP** means required for the minimum viable prototype. **After MVP** remains required for the completed hackathon prototype. IDs are stable for design and test references. Requirements are specifications, not claims that features are implemented.
 
-| ID | Requirement | Priority | Rationale / source | Acceptance criteria |
-|---|---|---|---|---|
-| FR-01 | Render the four-column board | MVP | M4: make progress visible | Columns labelled To Do, In Progress, Review and Done in that order; tasks appear under their saved status; each card shows title and assignee; first use seeds 3–4 fictional tasks once; deleting all tasks does not trigger reseeding |
-| FR-02 | Create, edit and delete tasks through one modal | MVP | M5: maintain task information | “+” opens a blank form; clicking a card opens saved values; save creates or updates the task; delete removes it; blank titles show validation; cancel preserves saved data; IDs and createdDate are generated automatically |
-| FR-03 | Change task status | MVP | M5: track work through stages | Modal dropdown supports all four states; saving moves the existing card without duplication |
-| FR-04 | Persist tasks and anchors | MVP | M5 and M11: retain work | Creation, edits, deletions, reassignment, context and URLs survive reload and browser reopening in the same browser profile |
-| FR-05 | Distinguish feature and bug tasks | MVP | M6: identify task type | Consistent type colours and icons on cards and modal; a label/icon communicates meaning without colour alone |
-| FR-06 | Display ownership and support handoff | MVP | M7: make responsibility clear | Card shows initials/name; handoff dropdown uses all three configured team member names; reassignment updates the card, shows confirmation and persists |
-| FR-07 | Show due-date urgency | MVP | M8: identify time-sensitive work | Calm, warning, overdue and neutral are distinguishable; Done overrides urgency; states update while the board remains open without editing a task |
-| FR-08 | Store Markdown context and selected AI tool | MVP | M9: retain the briefing for continued work | Modal contains Context textarea and optional tool dropdown with the values defined in DR-04; saved context/tool survive reload; saved context changes update contextUpdatedAt; unrelated changes do not; show a relative last-updated hint |
-| FR-09 | Copy task context | MVP | M10: transfer the briefing into an AI chat | Button on every card and in modal copies title, description and complete context as readable Markdown; verify by pasting into a text editor; card copy does not open modal; failures show a message |
-| FR-10 | Maintain deliverable anchors | MVP | M11: keep outputs accessible | Presentation, Demo, Report and Documentation remain above the board; each saves one URL; empty/filled status updates on adding/removing it; saved HTTP/HTTPS links open and survive reload |
-| FR-11 | Add one distinctive interaction | Required after MVP | M12: differentiate the tracker | Benjamin chooses and justifies the interaction, records acceptance criteria and demonstrates it without breaking core flows; choice remains `<TODO>` |
+### FR-01 — Render the four-column board
 
-### Proposed boundary and form decisions
+**Priority:** MVP
 
-These clarify gaps in the slides and need Benjamin’s review:
+**Rationale/source:** M4: make progress visible.
 
-- Require a trimmed title and one configured assignee. Default type to feature and status to todo. Description and dueDate may be empty.
-- Interpret date-only dueDate at the end of that date in the user's local timezone.
-- Incomplete tasks past their due time are overdue. Those due within the next 24 hours, including exactly 24 hours, show warning. Those due later show calm, including the otherwise unspecified 24–48-hour window. Undated tasks and Done tasks are neutral.
-- Copying inside the modal uses the displayed form values; it does not silently save them.
-- New context starts with headings Background, Constraints, Tried so far, and Pick up. Record actual prompts and outcomes under Tried so far.
-- Validate anchor URLs as HTTP/HTTPS and show errors next to invalid inputs.
+**Acceptance criteria**
+
+- Columns labelled To Do, In Progress, Review and Done in that order.
+- Tasks appear under their saved status.
+- Each card shows title and assignee.
+- First use seeds 3–4 fictional tasks once.
+- Deleting all tasks does not trigger reseeding.
+- Show a labelled empty state for an empty column and an Add task action when the board is empty.
+
+### FR-02 — Create, edit and delete tasks through one modal
+
+**Priority:** MVP
+
+**Rationale/source:** M5: maintain task information.
+
+**Acceptance criteria**
+
+- “+” opens a blank form.
+- Clicking a card opens saved values.
+- Save creates or updates the task.
+- Delete removes it.
+- Blank titles show validation.
+- Cancel preserves saved data.
+- IDs and createdDate are generated automatically.
+- Require a trimmed non-empty title and one configured assignee; description and due date are optional.
+- Cancel, Escape and the close button discard unsaved edits. Clicking the backdrop does not close the form.
+- Deleting an existing task requires confirmation naming the task; Cancel preserves it.
+
+### FR-03 — Change task status
+
+**Priority:** MVP
+
+**Rationale/source:** M5: track work through stages.
+
+**Acceptance criteria**
+
+- Modal dropdown supports all four states.
+- Saving moves the existing card without duplication.
+- Changing status in the modal takes effect only on Save task; Cancel leaves the original column unchanged.
+
+### FR-04 — Persist tasks and anchors
+
+**Priority:** MVP
+
+**Rationale/source:** M5 and M11: retain work.
+
+**Acceptance criteria**
+
+- Creation, edits, deletions, reassignment, context and URLs survive reload and browser reopening in the same browser profile.
+- Do not report success until the browser storage write succeeds; on failure retain form input and offer a retry.
+
+### FR-05 — Distinguish feature and bug tasks
+
+**Priority:** MVP
+
+**Rationale/source:** M6: identify task type.
+
+**Acceptance criteria**
+
+- Consistent type colours and icons on cards and modal.
+- A label/icon communicates meaning without colour alone.
+
+### FR-06 — Display ownership and support handoff
+
+**Priority:** MVP
+
+**Rationale/source:** M7: make responsibility clear.
+
+**Acceptance criteria**
+
+- Card shows initials/name.
+- Handoff dropdown uses all three configured team member names.
+- Reassignment updates the card, shows confirmation and persists.
+- The modal assignee change takes effect on Save task. A separate board handoff control, if provided, saves immediately and announces the new owner.
+- Selecting the current owner is a no-op. Handoff does not send notifications or change other task fields.
+
+### FR-07 — Show due-date urgency
+
+**Priority:** MVP
+
+**Rationale/source:** M8: identify time-sensitive work.
+
+**Acceptance criteria**
+
+- Calm, warning, overdue and neutral are distinguishable.
+- Done overrides urgency.
+- States update while the board remains open without editing a task.
+- Use the proposed deadline rules below. Recalculate at least once per minute and when returning to the browser tab.
+
+#### FR-07 deadline rules — proposed defaults
+
+Interpret a date-only due date as the final instant before the following local calendar day. Test exact boundaries rather than parsing it as UTC midnight.
+
+| Condition, evaluated in this order | State |
+|---|---|
+| Task is Done | Neutral |
+| No due date | Neutral |
+| Current time is after the deadline | Overdue |
+| Deadline is now or within the next 24 hours, inclusive | Warning |
+| Deadline is more than 24 hours away | Calm |
+
+The calm 24–48-hour interval and local-day interpretation close gaps in the brief and remain proposed for review. State labels accompany colours; date changes need no manual refresh.
+
+### FR-08 — Store Markdown context and selected AI tool
+
+**Priority:** MVP
+
+**Rationale/source:** M9: retain the briefing for continued work.
+
+**Acceptance criteria**
+
+- Modal contains Context textarea and optional tool dropdown with the values defined in DR-04.
+- Saved context/tool survive reload.
+- Saved context changes update contextUpdatedAt.
+- Unrelated changes do not.
+- Show a relative last-updated hint.
+- Offer Background, Constraints, Tried so far and Pick up as a starting template. Users can record prompts and their outcomes in Tried so far.
+- Save the timestamp on creation only if context contains non-whitespace text; subsequently update it when saved context changes, including clearing it. Changing only the AI tool does not change the context timestamp.
+
+### FR-09 — Copy task context
+
+**Priority:** MVP
+
+**Rationale/source:** M10: transfer the briefing into an AI chat.
+
+**Acceptance criteria**
+
+- Button on every card and in modal copies title, description and complete context as readable Markdown.
+- Verify by pasting into a text editor.
+- Card copy does not open modal.
+- Failures show a message.
+- Card copy uses saved task values; modal copy uses displayed values without saving them (proposed behaviour).
+- Copy still works when optional description/context is blank. On clipboard failure, show the full generated text in a labelled selectable field for manual copying.
+
+### FR-10 — Maintain deliverable anchors
+
+**Priority:** MVP
+
+**Rationale/source:** M11: keep outputs accessible.
+
+**Acceptance criteria**
+
+- Presentation, Demo, Report and Documentation remain above the board.
+- Each saves one URL.
+- Empty/filled status updates on adding/removing it.
+- Saved HTTP/HTTPS links open and survive reload.
+- Validate HTTP/HTTPS URLs, associate errors with the field and preserve invalid input for correction.
+- Save link persists an edited URL; Open link opens the saved URL. Clear link removes the URL but preserves its fixed slot.
+
+### FR-11 — Add one distinctive interaction
+
+**Priority:** After MVP · **Status:** Unresolved
+
+**Requirement:** Provide one distinctive interaction that supports the team’s engineering workflow (M12).
+
+The interaction, its justification and measurable acceptance criteria must be chosen before implementation. No specific feature is approved by this placeholder. It must remain usable with a keyboard and preserve existing task data.
 
 ## 2. Non-functional requirements
 
-All non-functional requirements are MVP requirements. Target WCAG 2.2 AA; conformance must be evaluated on the finished implementation. The response-time target in NFR-04 is proposed for review.
+These specify quality standards and technical constraints. All are **MVP**. WCAG 2.2 AA is a target to assess on the completed prototype, not a current compliance claim.
 
-| ID | Requirement and acceptance check | Priority | Justification |
-|---|---|---|---|
-| NFR-01 | Assessor can open the deployed prototype and use its features without registration or a paid subscription; test in a signed-out browser | MVP | Assessment pp. 4 and 6 requires marking access |
-| NFR-02 | Support complete keyboard operation, visible unobscured focus, labelled controls, accessible dialogs and announced feedback. Normal text contrast must be at least 4.5:1 and essential control/focus contrast at least 3:1. Provide text alongside status colours, 44×44 CSS px hit areas and reduced-motion support. Pass the detailed DESIGN.md §8 checks using keyboard and VoiceOver/Safari | MVP | Supports usable, understandable interaction |
-| NFR-03 | Remain usable at 1280×720, 200% text enlargement and 320 CSS px width; stack columns and anchor slots at narrow widths, prevent horizontal page scrolling and clipping, and keep modal controls reachable | MVP | Supports a reliable laptop demonstration |
-| NFR-04 | Saving and updating the board with 100 fictional tasks completes within one second on the recorded test laptop/browser | MVP | Proposed measurable responsiveness target |
-| NFR-05 | Storage failures show an actionable error and never falsely report a successful save; normal reload/reopen retains data | MVP | Protects user effort and communicates limitations |
-| NFR-06 | Core flows pass in current Chrome and one other browser; record versions and failures | MVP | Reduces browser-specific marking problems |
-| NFR-07 | Display context as text; sanitise it if Markdown preview is later adopted; pasted HTML must not execute | MVP | Keeps user-entered context safe to display |
+### NFR-01 — Access for assessment
 
-| NFR-08 | Use localStorage within one browser profile only; do not introduce a database, backend, cross-device synchronisation or real-time collaboration. Explain browser-local storage in the interface | MVP | Confirmed prototype constraint; supports team workflows on one device |
-| NFR-09 | Retain the starter React/Vite and Tailwind architecture and deploy the prototype to Vercel | MVP | Preserves the agreed implementation environment |
+**Priority:** MVP
+
+**Rationale:** Assessment pp. 4 and 6 requires marking access.
+
+**Acceptance/constraint:** Assessor can open the deployed prototype and use its features without registration or a paid subscription; test in a signed-out browser.
+
+### NFR-02 — Accessible interaction
+
+**Priority:** MVP
+
+**Rationale:** Supports usable, understandable interaction.
+
+- Complete all core flows using a keyboard, with visible unobscured focus and no keyboard traps.
+- Use labelled native controls, an accessible modal title, focus containment and return, and announced save/copy/handoff feedback.
+- Normal text contrast is at least 4.5:1; essential controls and focus indicators at least 3:1 against adjacent colours. Type and urgency use labels as well as colour.
+- Adopt 44×44 CSS px interactive hit areas as a project choice and honour reduced-motion preferences.
+- Verify all detailed checks in DESIGN.md §8 with keyboard and VoiceOver/Safari; record results. Automated checks supplement manual evaluation.
+
+### NFR-03 — Zoom and reflow
+
+**Priority:** MVP
+
+**Rationale:** Supports a reliable laptop demonstration.
+
+**Acceptance/constraint:** Remain usable at 1280×720, 200% text enlargement and 320 CSS px width; stack columns and anchor slots at narrow widths, prevent horizontal page scrolling and clipping, and keep modal controls reachable.
+
+### NFR-04 — Response time
+
+**Priority:** MVP
+
+**Rationale:** Proposed measurable responsiveness target.
+
+**Acceptance/constraint:** Proposed target: with 100 fictional tasks, each of 10 consecutive task saves updates the board within one second, measured from Save task activation to the updated card being rendered. Record hardware, OS, browser version and timings; exclude initial loading. This is an assistant-proposed target, not a measured user need.
+
+### NFR-05 — Reliability and error recovery
+
+**Priority:** MVP
+
+**Rationale:** Protects user effort and communicates limitations.
+
+**Acceptance/constraint:** Failed reads/writes must show actionable persistent errors and must not show a false saved state. Keep unsaved form input available for retry. Invalid stored data must not be silently replaced by seed data. Offer reload/retry; an explicit reset requires confirmation and affects only this application’s storage keys. Existing data remains untouched until the user confirms reset. Test failures as well as normal reload/reopening.
+
+### NFR-06 — Browser compatibility
+
+**Priority:** MVP
+
+**Rationale:** Reduces browser-specific marking problems.
+
+**Acceptance/constraint:** Core flows pass in current Chrome and one other browser; record versions and failures.
+
+### NFR-07 — Safe handling of user input
+
+**Priority:** MVP
+
+**Rationale:** Keeps user-entered context safe to display.
+
+**Acceptance/constraint:** Display context as text; sanitise it if Markdown preview is later adopted; pasted HTML must not execute.
+
+### NFR-08 — Local prototype boundary
+
+**Priority:** MVP
+
+**Rationale:** Confirmed prototype constraint; supports team workflows on one device.
+
+**Acceptance/constraint:** Use localStorage within one browser profile only; do not introduce a database, backend, cross-device synchronisation or real-time collaboration. Explain browser-local storage in the interface.
+
+### NFR-09 — Implementation constraints
+
+**Priority:** MVP
+
+**Rationale:** Preserves the agreed implementation environment.
+
+**Acceptance/constraint:** Retain the starter React/Vite and Tailwind architecture and deploy the prototype to Vercel.
 
 ## 3. Data requirements
 
-All data requirements are MVP requirements. Preserve the field names and formats defined below, including `createdDate`.
+All are **MVP**. Each group identifies its source, purpose and rules. Retain starter field names, particularly `createdDate`. No external data feed or AI API is required.
 
-| ID | Data | Source / collection | Justification and check |
-|---|---|---|---|
-| DR-01 | id, title, description, type, status | User form; application generates unique ID | Identifies and organises tasks; compare saved form values with rendered cards |
-| DR-02 | Three team member names and Task.assignee | Target team supplies three distinct names for application configuration; fictional names may be used for demos | Supports ownership; only configured names are accepted |
-| DR-03 | dueDate and createdDate | User supplies due date; application generates creation date | Supports urgency and record creation; validate ISO dates and preserve createdDate during edits |
-| DR-04 | context, contextTool, contextUpdatedAt | User writes actual briefing and selects tool; application timestamps saved changes | Enables continuation; verify storage and copied content match input |
-| DR-05 | Four Anchor objects with fixed IDs, labels and nullable URLs | Fixed slots; user supplies links | Connects final outputs; verify IDs remain stable and URLs persist |
-| DR-06 | Three or four example tasks and initialisation state | Fictional seed data from application | Demonstrates first-use behaviour; mark examples as fictional and seed only once |
+### DR-01 — Task identity and classification
 
-GitHub handles belong in project documentation, not the runtime task model. No external data feed or AI API is required. Fictional demo data must not be presented as research evidence.
+**Priority:** MVP
 
-### Task field definitions (DR-01–DR-04)
+**Source:** User form; application generates IDs.
+
+**Rationale:** Identify and organise work.
+
+**Data rules:** Require a unique immutable ID, trimmed non-empty title and valid type/status. Description may be empty. Defaults are feature and todo.
+
+### DR-02 — Team membership and ownership
+
+**Priority:** MVP
+
+**Source:** Three distinct configured team names; user selects owner.
+
+**Rationale:** Support team assignment and handoff.
+
+**Data rules:** Each task references exactly one configured name. Demo names are clearly fictional; developer identity does not determine task ownership. Account registration and team-management screens are not required.
+
+### DR-03 — Task dates
+
+**Priority:** MVP
+
+**Source:** User supplies dueDate; application generates createdDate.
+
+**Rationale:** Support deadlines and record creation.
+
+**Data rules:** Use valid YYYY-MM-DD calendar dates. dueDate may be null; createdDate is immutable. Apply FR-07 local-calendar rules.
+
+### DR-04 — AI context
+
+**Priority:** MVP
+
+**Source:** User supplies text/tool; application generates update timestamp.
+
+**Rationale:** Retain an editable briefing for continued work.
+
+**Data rules:** Preserve Markdown whitespace and line breaks. Restrict tool to the listed values or null. Apply FR-08 timestamp rules. No generated example content is actual prompt history.
+
+### DR-05 — Deliverable links
+
+**Priority:** MVP
+
+**Source:** Fixed slot definitions; user supplies URLs.
+
+**Rationale:** Keep project outputs accessible.
+
+**Data rules:** Exactly four fixed IDs/labels must exist. Validate HTTP/HTTPS URLs; empty slots store null. Clearing a link never deletes its slot.
+
+### DR-06 — Initial demonstration data
+
+**Priority:** MVP
+
+**Source:** Fictional application seed data.
+
+**Rationale:** Provide a usable first-run demonstration.
+
+**Data rules:** Seed 3–4 tasks only when there is no initialised dataset. An empty saved list remains empty. Seed task assignees match the configured names; all fields satisfy this schema.
+
+### DR-07 — Storage and integrity
+
+**Priority:** MVP
+
+**Source:** Application serialises and reads localStorage.
+
+**Rationale:** Preserve records without silently losing user data.
+
+**Data rules:** Restore saved field values on the same origin/browser profile. Validate types, required values, enum membership, unique task IDs and exact anchor slots. Reject malformed records through NFR-05 recovery; do not overwrite them with examples. Browser-cleared data cannot be recovered automatically. No cross-device sync or backup is provided.
+
+### Task field reference (DR-01–DR-04)
 
 | Field | Type and validation | Source |
 |---|---|---|
@@ -75,7 +335,7 @@ GitHub handles belong in project documentation, not the runtime task model. No e
 | `createdDate` | ISO date `YYYY-MM-DD`; unchanged during edits | Application generates on creation |
 | `context` | Markdown string preserving line breaks; empty allowed | User input, initially offered the FR-08 template |
 | `contextTool` | `Claude`, `ChatGPT`, `Cursor`, `Lovable`, `Replit`, `Other`, or null | Optional user selection |
-| `contextUpdatedAt` | ISO timestamp or null before context has been saved; update when saved context changes | Application-generated |
+| `contextUpdatedAt` | ISO timestamp or null until context has first been saved with content; thereafter update when saved context changes | Application-generated |
 
 ### Deliverable field definitions (DR-05)
 
@@ -86,9 +346,3 @@ GitHub handles belong in project documentation, not the runtime task model. No e
 | `url` | Valid HTTP/HTTPS URL string or null | User input |
 
 Exactly four deliverable records must exist. Removing a URL preserves its record and label.
-
-### Storage and integrity (DR-06–DR-07)
-
-DR-06: Store an initialisation state so fictional example tasks are created once. An intentionally empty task list must remain empty after reload. Example assignees must match the configured team names and be clearly fictional when no real team has been supplied.
-
-DR-07 (MVP): Serialise tasks and anchors to localStorage and restore their field values on reopening the same origin in the same browser profile. Validate loaded records against the defined types and allowed values. Invalid stored data must produce a recoverable error rather than silently overwriting it with example data. This preserves user input and prevents invalid records from breaking the board. Browser storage can be cleared by the user and is not a backup.
