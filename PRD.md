@@ -162,7 +162,7 @@ These bands use local calendar dates, not rolling 24-hour periods. State labels 
 - Validate HTTP/HTTPS URLs, associate errors with the field and preserve invalid input for correction.
 - Save link persists an edited URL; Open link opens the saved URL. Clear link removes the URL but preserves its fixed slot.
 
-### FR-11 — Add one distinctive interaction
+### FR-11 — Filter tasks by engineer using Focus View
 
 **Priority:** After MVP · **Status:** Defined for M12
 
