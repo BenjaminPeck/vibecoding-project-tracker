@@ -220,7 +220,7 @@ These bands use local calendar dates, not rolling 24-hour periods. State labels 
 
 ## 2. Non-functional requirements
 
-These specify quality standards and technical constraints. All are **MVP**. WCAG 2.2 AA is a target to assess on the completed prototype, not a current compliance claim.
+These specify quality standards. All are **MVP**. WCAG 2.2 AA is a target to assess on the completed prototype, not a current compliance claim.
 
 ### NFR-01 — Access for assessment
 
@@ -281,22 +281,6 @@ These specify quality standards and technical constraints. All are **MVP**. WCAG
 **Rationale:** Keeps user-entered context safe to display.
 
 **Acceptance/constraint:** Display context as text; sanitise it if Markdown preview is later adopted; pasted HTML must not execute.
-
-### NFR-08 — Local prototype boundary
-
-**Priority:** MVP
-
-**Rationale:** Confirmed prototype constraint; supports team workflows on one device.
-
-**Acceptance/constraint:** Use localStorage within one browser profile only; do not introduce a database, backend, cross-device synchronisation or real-time collaboration. Explain browser-local storage in the interface.
-
-### NFR-09 — Implementation constraints
-
-**Priority:** MVP
-
-**Rationale:** Preserves the agreed implementation environment.
-
-**Acceptance/constraint:** Retain the starter React/Vite and Tailwind architecture and deploy the prototype to Vercel.
 
 ## 3. Data requirements
 
