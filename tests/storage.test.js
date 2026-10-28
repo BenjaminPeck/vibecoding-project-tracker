@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { loadTasks, saveTasks, validDate, TASK_KEY } from '../src/data/storage.js';
-import { TEAM, isLegacyExampleTasks } from '../src/data/tasks.js';
+import { TEAM, createExampleTasks, isLegacyExampleTasks, isPreviousExampleTasks } from '../src/data/tasks.js';
 function memory(raw=null) { return {raw,getItem(){return this.raw;},setItem(key,value){assert.equal(key,TASK_KEY);this.raw=value;}}; }
 test('seed once, persist edits and preserve an intentionally empty board',()=>{
- const s=memory();const tasks=loadTasks(s);assert.equal(tasks.length,4);
+ const s=memory();const tasks=loadTasks(s);assert.equal(tasks.length,10);
+ assert.deepEqual(['todo','in-progress','review','done'].map(status=>tasks.filter(task=>task.status===status).length),[3,3,2,2]);
  tasks[0].title='Edited';saveTasks(s,tasks);assert.equal(loadTasks(s)[0].title,'Edited');
  saveTasks(s,[]);assert.deepEqual(loadTasks(s),[]);
 });
@@ -56,4 +57,23 @@ test('only untouched legacy sample tasks refresh to software-development example
  old[0].description='Keep the presentation, demo, report and documentation together.';
  old[0].priority='high';
  assert(!isLegacyExampleTasks(old));
+});
+
+test('only the unchanged four-task sample expands without replacing saved task order', () => {
+ const previous=createExampleTasks(new Date('2026-10-20T12:00:00')).slice(0,4);
+ const reordered=[previous[1],previous[2],previous[3],{...previous[0],contextUpdatedAt:new Date('2026-10-21T12:00:00Z').toISOString()}];
+ assert(isPreviousExampleTasks(reordered));
+ const storage=memory(JSON.stringify(reordered));
+ const expanded=loadTasks(storage);
+ assert.equal(expanded.length,10);
+ assert.deepEqual(expanded.slice(0,4).map(task=>task.id),reordered.map(task=>task.id));
+ assert.equal(expanded[3].contextUpdatedAt,reordered[3].contextUpdatedAt);
+ assert.equal(loadTasks(storage).length,10);
+ const edited=structuredClone(previous);edited[0].description='Personal edit';
+ assert(!isPreviousExampleTasks(edited));
+ const editedStorage=memory(JSON.stringify(edited));
+ assert.equal(loadTasks(editedStorage).length,4);
+ assert.equal(editedStorage.raw,JSON.stringify(edited));
+ const deletedStorage=memory(JSON.stringify(previous.slice(1)));
+ assert.equal(loadTasks(deletedStorage).length,3);
 });

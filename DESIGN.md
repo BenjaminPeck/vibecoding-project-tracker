@@ -10,6 +10,8 @@ A modern engineering workspace with warm surfaces, precise typography and purpos
 
 Design for software engineers working in teams. Use warm ivory surroundings, white task cards, charcoal text and saturated indigo primary actions. Pale lavender, blue, amber and sage column headers add colour without tinting every task. Keep controls compact, labels explicit and technical context easy to scan. This direction reflects Benjamin’s preference; usability has not yet been tested. No external visual references have been selected.
 
+Before the workspace, show a clearly labelled Demo login page with Email and Password fields that are visibly disabled and cannot accept details. The text says that no details are needed; its Log in button opens the prototype as Alex Morgan without checking credentials. A Log out button in the workspace returns to the login page without deleting browser-local work. The entry text states that no one is authenticated and changes stay in this browser. The login page appears again after a reload; it does not create an account, session or shared team data. Benjamin requested this prototype-only interaction after course-group reports of verbal login guidance; it is not a verified client request or a working login system.
+
 Desktop composition, top to bottom:
 
 1. Header: product name and short description on the left; primary “Add task” action on the right.
@@ -21,7 +23,7 @@ Use 12px vertical header padding and 24px desktop horizontal padding. Use 24px o
 
 Use colour mainly for primary actions, small stage markers, type badges and urgency labels. Avoid decorative gradients, oversized hero sections and playful illustrations. Keep task information prominent, with modest corner radii, crisp separators and minimal shadows. Stage names remain visible so stage colour cannot be confused with urgency.
 
-Initial sample cards use plausible software-development work across feature, bug, review and completed states. Their names, reproduction notes and owners are fictional examples, not verified issues or research evidence. Relative dates show the urgency colours on first use without making the sample depend on a fixed assessment date.
+The initial sample board has ten cards: three To Do, three In Progress, two Review and two Done. They use plausible software-development work across feature, bug, review and completed states. Their names, reproduction notes and owners are fictional examples, not verified issues or research evidence. Relative dates show urgency and ordering on first use without making the sample depend on a fixed assessment date.
 
 ## 2. Colour tokens
 
@@ -114,7 +116,7 @@ The separate “Copy Context” action on each card and in the task modal assemb
 
 ### Movement
 
-In Manual order on the full board, cards can be dragged between columns and dropped before another card to change order. Highlight the active drop target and keep cards clickable for editing. Clicking or keyboard-activating the labelled six-dot grip opens a compact menu with Move up, Move down and target-column options; this gives keyboard and simple-pointer users equivalent control without adding a persistent control to the card. The modal Status dropdown remains available. A successful move is announced; a failed browser-storage write keeps the original board and shows an error. Priority and Due date views hide drag and Move controls because their automatic order would obscure manual reordering. Dragging is a board interaction, separate from M12 Focus View.
+Cards can be dragged between columns in every Order mode, including Focus View; Priority and Due date then sort them within the destination column. In Manual order on the full board, dropping before another card also changes saved order within a column. Highlight valid drop targets and keep cards clickable for editing. Clicking or keyboard-activating the labelled six-dot grip opens target-column actions in every mode, with Move up/down added only for manual reordering. The modal Status dropdown remains available. A successful move is announced; a failed browser-storage write keeps the original board and shows an error. Do not suggest that a same-column drag can reorder an automatically sorted view.
 
 ## 5. Voice and microcopy
 
@@ -201,15 +203,15 @@ On clipboard failure expose a labelled read-only textarea containing the complet
 
 On invalid stored data, show a persistent explanation with Retry and an explicit Reset local data option. Reset opens a confirmation describing the loss, defaults focus to Cancel and only clears this app's keys. Never silently replace existing data with demo tasks. A retry must not discard unsaved form input. This is the recovery specified in NFR-05/DR-07, not a backup facility.
 
-Long task titles wrap; long URLs and technical strings wrap without widening the page. No action depends on hover. Do not add disabled placeholder controls for features that have not been built.
+Long task titles wrap; long URLs and technical strings wrap without widening the page. No action depends on hover. Outside the explicitly labelled demo login, do not add disabled placeholder controls for features that have not been built.
 
 ### Focus View
 
-Place a compact card-surface filter row above the four board columns. Use a labelled native Engineer select with All tasks and the configured names. When filtered, show the selected engineer’s tasks by status and the current order setting, with a visible count and Show all tasks action. Keep the familiar stage surfaces and task cards, including editing and handoff. Hide drag grips in Focus View because this view does not support manual reordering. Save the chosen filter separately from task data in this browser; never imply authentication or shared team state. The select and reset action must be keyboard accessible and remain usable at narrow widths.
+Place a compact card-surface filter row above the four board columns. Use a labelled native Engineer select with All tasks and the configured names. When filtered, show the selected engineer’s tasks by status and the current order setting, with a visible count and Show all tasks action. Keep the familiar stage surfaces and task cards, including editing, handoff and cross-column movement. Focus View does not support same-column manual reordering. Save the chosen filter separately from task data in this browser; never imply authentication or shared team state. The select and reset action must be keyboard accessible and remain usable at narrow widths.
 
 ### Priority and board order
 
-Use a labelled High/Normal/Low dropdown in the task modal, defaulting to Normal. Show the saved priority as a small text badge beside Feature/Bug, using arrows only as supplementary cues. The compact filter row also has a labelled Order dropdown: Priority (default), Due date and Manual. Priority groups tasks High–Normal–Low within each stage, with due date resolving ties; Due date uses earliest first; Manual preserves saved card order and reveals drag grips with on-demand move options on the full board. The choice is a browser-local preference. Do not change task data when changing views, or suggest that dragging will reorder a sorted view.
+Use a labelled High/Normal/Low dropdown in the task modal, defaulting to Normal. Show the saved priority as a small text badge beside Feature/Bug, using arrows only as supplementary cues. The compact filter row also has a labelled Order dropdown: Priority (default), Due date and Manual. Priority groups tasks High–Normal–Low within each stage, with due date resolving ties; Due date uses earliest first; Manual preserves saved card order. The grip supports cross-column movement in every mode and adds same-column reorder options in Manual on the full board. The choice is a browser-local preference. Do not change task data when changing views, or suggest that dragging will reorder a sorted view.
 
 At 320 CSS pixels, the Engineer and Order controls wrap within the Focus View row rather than forcing horizontal page scrolling. The task and team dialogs remain independently scrollable, with actions reachable at that width.
 

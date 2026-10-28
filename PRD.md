@@ -15,7 +15,7 @@ These describe what the team-facing prototype must do. **MVP** means required fo
 - Columns labelled To Do, In Progress, Review and Done in that order.
 - Tasks appear under their saved status.
 - Each card shows title and assignee.
-- First use seeds 3–4 fictional tasks once.
+- First use seeds ten fictional software-development tasks across the four stages once.
 - Deleting all tasks does not trigger reseeding.
 - Show a labelled empty state for an empty column and an Add task action when the board is empty.
 
@@ -49,7 +49,7 @@ These describe what the team-facing prototype must do. **MVP** means required fo
 - Modal dropdown supports all four states.
 - Saving moves the existing card without duplication.
 - Changing status in the modal takes effect only on Save task; Cancel leaves the original column unchanged.
-- Dragging a card to another column changes its saved status; dropping before a card can reorder within a column. A storage failure leaves the original status/order unchanged and shows an error. The modal Status dropdown remains available without dragging.
+- Dragging a card to another column changes its saved status in every Order mode; the selected mode sorts cards within that column. Dropping before a card reorders within a column only in Manual mode. A storage failure leaves the original status/order unchanged and shows an error. The modal Status dropdown remains available without dragging.
 
 ### FR-04 — Persist tasks and anchors
 
@@ -176,7 +176,7 @@ These bands use local calendar dates, not rolling 24-hour periods. State labels 
 - Selecting an engineer shows only their tasks in the existing four status columns, using the current board order setting.
 - The board shows the visible count and an explicit Show all tasks action. A selected engineer with no work receives an informative empty state.
 - The selection survives reload in the same browser. If preference storage fails, the view still changes for the current page and explains that it will not be remembered.
-- Filtering does not alter saved task records, owners, or the local-only prototype model. Users can still edit tasks; the full board retains drag reordering.
+- Filtering does not alter saved task records, owners, or the local-only prototype model. Users can still edit tasks and move them between columns; same-column drag reordering is available on the full board in Manual mode.
 
 ### FR-12 — Switch between light and dark modes
 
@@ -200,7 +200,7 @@ These bands use local calendar dates, not rolling 24-hour periods. State labels 
 
 - The task modal offers High, Normal and Low in a labelled dropdown; new tasks default to Normal. The saved priority appears as text on the card.
 - Each column defaults to High, then Normal, then Low; tasks of equal priority use earliest due date first, with undated tasks last.
-- A labelled Order control offers Priority, Due date and Manual. Manual shows saved card order and enables dragging; clicking or keyboard-activating each card's labelled grip opens non-drag actions for reordering or changing columns. Sorted views do not present these manual controls.
+- A labelled Order control offers Priority, Due date and Manual. Every mode allows dragging a card to another column and provides a labelled grip with non-drag column actions. Manual shows saved card order and additionally allows same-column drag reordering and Move up/down actions. Priority and Due date sort within each column and do not offer manual reordering there.
 - The order choice survives reload in the same browser and applies within Focus View. Changing the view does not rewrite task records.
 - Existing saved tasks without a priority load as Normal without overwriting their stored records; invalid priority values are rejected.
 
@@ -344,7 +344,7 @@ DR-01–DR-07 are **MVP**; DR-08–DR-11 support later additions. Each group ide
 
 **Rationale:** Provide a usable first-run demonstration.
 
-**Data rules:** Seed 3–4 fictional software-development tasks only when there is no initialised dataset. Give examples plausible descriptions, Markdown context and relative due dates so urgency states can be demonstrated. An empty saved list remains empty. Seed task assignees match the configured names; all fields satisfy this schema. An untouched first-release example dataset may be upgraded to the revised examples; edited or deleted task data must remain unchanged.
+**Data rules:** Seed ten fictional software-development tasks only when there is no initialised dataset, with several tasks in each stage. Give examples plausible descriptions, Markdown context and relative due dates so urgency and ordering can be demonstrated. An empty saved list remains empty. Seed task assignees match the configured names; all fields satisfy this schema. An untouched earlier example dataset may be expanded; edited or deleted task data must remain unchanged.
 
 ### DR-07 — Storage and integrity
 

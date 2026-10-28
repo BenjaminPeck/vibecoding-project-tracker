@@ -1,4 +1,4 @@
-import { STAGES, TEAM, createExampleTasks, isLegacyExampleTasks } from './tasks.js';
+import { STAGES, TEAM, createExampleTasks, isLegacyExampleTasks, isPreviousExampleTasks } from './tasks.js';
 import { CONTEXT_TOOLS } from './context.js';
 import { PRIORITIES } from './taskOrder.js';
 export const TASK_KEY = 'vibetracker.tasks';
@@ -20,10 +20,17 @@ export function loadTasks(storage, members = TEAM) {
   const raw = storage.getItem(TASK_KEY);
   if (raw !== null) {
     const saved = validateTasks(JSON.parse(raw), members);
-    if (!isLegacyExampleTasks(saved)) return saved;
-    const refreshed = createExampleTasks();
-    try { saveTasks(storage, refreshed, members); return refreshed; }
-    catch { return saved; }
+    if (isLegacyExampleTasks(saved)) {
+      const refreshed = createExampleTasks();
+      try { saveTasks(storage, refreshed, members); return refreshed; }
+      catch { return saved; }
+    }
+    if (isPreviousExampleTasks(saved)) {
+      const expanded = [...saved, ...createExampleTasks().slice(4)];
+      try { saveTasks(storage, expanded, members); return expanded; }
+      catch { return saved; }
+    }
+    return saved;
   }
   const initial = createExampleTasks();
   saveTasks(storage, initial, members);

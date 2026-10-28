@@ -13,6 +13,7 @@ import { loadSortMode, saveSortMode, sortTasks } from './data/taskOrder';
 import { loadProfiles, loadTeam, saveProfiles, saveTeam, validateProfile, validateTeam } from './data/team';
 
 export default function App() {
+  const [enteredDemo, setEnteredDemo] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [members, setMembers] = useState([]);
   const [profiles, setProfiles] = useState({});
@@ -30,6 +31,7 @@ export default function App() {
   const [sortMode, setSortMode] = useState(() => { try { return loadSortMode(window.localStorage); } catch { return 'priority'; } });
   const visibleTasks = sortTasks(focusTasks(tasks, focusOwner), sortMode);
   const opener = useRef(null);
+  const demoButton = useRef(null);
   const addButton = useRef(null);
   const teamButton = useRef(null);
   function load() {
@@ -156,6 +158,38 @@ export default function App() {
     try { saveProfiles(window.localStorage, remaining); setProfiles(remaining); } catch { /* An orphaned profile is not shown. */ }
     setMembers(next); setMessage(`${name} removed from the team.`);
   }
+  if (!enteredDemo) {
+    return (
+      <main className="flex min-h-screen items-center justify-center px-4 py-8">
+        <div className="w-full max-w-md rounded-xl border border-border-subtle bg-surface-card p-6 shadow-sm sm:p-8">
+          <p className="mb-3 text-sm font-medium text-brand-link">Vibecoding Project Tracker</p>
+          <h1 className="text-2xl font-semibold tracking-tight">Demo login</h1>
+          <p id="demo-explanation" className="mt-4 leading-7">No details are needed. These fields are for display only. Press Log in to use the demo as Alex Morgan.</p>
+          <div className="mt-5 space-y-4">
+            <div>
+              <label htmlFor="demo-email" className="mb-1 block text-sm font-medium">Email</label>
+              <input id="demo-email" type="email" disabled placeholder="Not needed for demo" aria-describedby="demo-explanation" className="min-h-11 w-full rounded-lg border border-border-control bg-surface-column px-3 text-text-muted disabled:cursor-not-allowed" />
+            </div>
+            <div>
+              <label htmlFor="demo-password" className="mb-1 block text-sm font-medium">Password</label>
+              <input id="demo-password" type="password" disabled placeholder="Not needed for demo" aria-describedby="demo-explanation" className="min-h-11 w-full rounded-lg border border-border-control bg-surface-column px-3 text-text-muted disabled:cursor-not-allowed" />
+            </div>
+          </div>
+          <button
+            type="button"
+            ref={demoButton}
+            autoFocus
+            onClick={() => {
+              setEnteredDemo(true);
+              requestAnimationFrame(() => document.getElementById('workspace-heading')?.focus());
+            }}
+            className="mt-6 min-h-11 w-full rounded-lg bg-brand-primary px-4 py-2 font-medium text-white hover:bg-brand-accent"
+          >Log in</button>
+          <p className="mt-5 text-sm leading-6 text-text-muted">Demo only: this does not authenticate you. Tasks and team members are examples, and changes are saved only in this browser.</p>
+        </div>
+      </main>
+    );
+  }
   return (
     <div className="min-h-screen">
       <a href="#board" className="sr-only z-50 rounded-lg bg-brand-primary p-3 text-white focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Skip to board</a>
@@ -163,13 +197,14 @@ export default function App() {
         <div className="mx-auto flex max-w-[1600px] flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-6">
           <div className="min-w-0">
             <div className="mb-1 flex items-center gap-2 text-sm font-medium text-brand-link"><span aria-hidden="true" className="h-2 w-2 rounded-full bg-brand-primary" />Team workspace</div>
-            <h1 className="break-words text-xl font-semibold tracking-tight">Vibecoding Project Tracker</h1>
+            <h1 id="workspace-heading" tabIndex={-1} className="break-words text-xl font-semibold tracking-tight">Vibecoding Project Tracker</h1>
             <p className="mt-1 text-sm leading-6 text-text-muted">Tasks, context and deliverables for your team.</p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex min-w-0 flex-wrap items-center justify-end gap-3">
             <button ref={teamButton} type="button" disabled={!ready} onClick={() => setManagingTeam(true)} className="min-h-11 rounded-lg border border-border-control bg-surface-card px-3 text-sm font-medium hover:bg-surface-hover disabled:opacity-50">Manage team</button>
             <button type="button" role="switch" aria-checked={theme === 'dark'} aria-label="Dark mode" onClick={toggleTheme} className="flex min-h-11 items-center gap-2 rounded-lg border border-border-control bg-surface-card px-3 text-sm font-medium hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-link"><span aria-hidden="true">{theme === 'dark' ? '☾' : '☀'}</span><span>{theme === 'dark' ? 'Dark' : 'Light'}</span><span aria-hidden="true" className={`relative h-5 w-9 rounded-full transition-colors motion-reduce:transition-none ${theme === 'dark' ? 'bg-brand-primary' : 'bg-border-control'}`}><span className={`absolute left-0 top-0.5 h-4 w-4 rounded-full bg-white transition-transform motion-reduce:transition-none ${theme === 'dark' ? 'translate-x-[18px]' : 'translate-x-0.5'}`} /></span></button>
             <button ref={addButton} disabled={!ready} onClick={() => open(null)} className="min-h-11 rounded-lg bg-brand-primary px-4 py-2 font-medium text-white hover:bg-brand-accent disabled:opacity-50">Add task</button>
+            <button type="button" onClick={() => { setEnteredDemo(false); requestAnimationFrame(() => demoButton.current?.focus()); }} className="min-h-11 rounded-lg border border-border-control bg-surface-card px-3 text-sm font-medium hover:bg-surface-hover">Log out</button>
           </div>
         </div>
       </header>
@@ -178,7 +213,7 @@ export default function App() {
         <div className="mb-4 flex flex-wrap items-end justify-between gap-4">
           <div>
             <h2 className="text-xl font-semibold tracking-tight">Project board</h2>
-            <p className="mt-1 text-sm text-text-muted">{focusOwner ? `Focus View shows this engineer’s tasks in ${sortMode === 'priority' ? 'priority' : sortMode === 'due' ? 'due-date' : 'manual'} order within each stage.` : sortMode === 'manual' ? 'Click the six-dot grip for move options, or drag it to reposition a card.' : `Cards are ordered by ${sortMode === 'priority' ? 'priority' : 'due date'} within each stage. Choose Manual order to move or drag cards.`}</p>
+            <p className="mt-1 text-sm text-text-muted">{sortMode === 'manual' && !focusOwner ? 'Drag cards between stages or reorder them within a stage. Click a six-dot grip for move options.' : `Cards are ordered by ${sortMode === 'priority' ? 'priority' : sortMode === 'due' ? 'due date' : 'saved order'} within each stage. Drag cards between stages; choose Manual on the full board to reorder within a stage.`}</p>
           </div>
           <p className="text-sm text-text-muted"><span className="font-semibold text-text-primary">{visibleTasks.length}</span> {focusOwner ? `of ${tasks.length} tasks` : 'tasks'} <span aria-hidden="true">·</span> {members.length} {members.length === 1 ? 'member' : 'members'}</p>
         </div>
@@ -208,8 +243,9 @@ export default function App() {
         </div>
         <p role="status" className="mb-3 text-sm text-text-muted">{message}</p>
         {focusOwner && ready && !loadError && visibleTasks.length === 0 && <p className="mb-4 rounded-lg border border-border-subtle bg-surface-card p-4 text-sm">No tasks assigned to {focusOwner}. Choose another engineer or show all tasks.</p>}
-        {loadError ? <div role="alert" className="rounded-lg border border-border-control bg-surface-card p-5"><h3 className="font-semibold">Could not load saved {teamError ? 'team or tasks' : 'tasks'}</h3><p className="my-3">Browser storage is unavailable or contains invalid data. Nothing has been overwritten.</p><div className="flex flex-wrap gap-3"><button onClick={load} className="min-h-11 rounded border border-border-control px-4">Retry</button><button onClick={teamError ? resetWorkspace : reset} className="min-h-11 rounded border border-border-control px-4 text-due-overdue">Reset local {teamError ? 'team and tasks' : 'tasks'}</button></div></div> : ready ? <Board tasks={visibleTasks} members={members} onEdit={open} onHandoff={handoff} onMove={move} now={now} allowDrag={!focusOwner && sortMode === 'manual'} /> : <p>Loading tasks…</p>}
+        {loadError ? <div role="alert" className="rounded-lg border border-border-control bg-surface-card p-5"><h3 className="font-semibold">Could not load saved {teamError ? 'team or tasks' : 'tasks'}</h3><p className="my-3">Browser storage is unavailable or contains invalid data. Nothing has been overwritten.</p><div className="flex flex-wrap gap-3"><button onClick={load} className="min-h-11 rounded border border-border-control px-4">Retry</button><button onClick={teamError ? resetWorkspace : reset} className="min-h-11 rounded border border-border-control px-4 text-due-overdue">Reset local {teamError ? 'team and tasks' : 'tasks'}</button></div></div> : ready ? <Board tasks={visibleTasks} members={members} onEdit={open} onHandoff={handoff} onMove={move} now={now} allowReorder={!focusOwner && sortMode === 'manual'} /> : <p>Loading tasks…</p>}
         <aside aria-label="Prototype information" className="mt-6 border-t border-border-subtle pt-4 text-sm leading-6 text-text-muted">
+          <p>Demo view: Alex Morgan. No account is signed in.</p>
           <p><strong className="font-medium text-text-primary">Example workspace.</strong> The initial tasks and team members are fictional.</p>
           <p>Saved in this browser. Changes are not shared across devices.</p>
         </aside>
