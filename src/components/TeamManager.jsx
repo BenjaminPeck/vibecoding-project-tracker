@@ -7,22 +7,28 @@ const initials = name => name.split(/\s+/).slice(0, 2).map(part => part[0]).join
 export default function TeamManager({ members, profiles, tasks, onAdd, onUpdate, onRemove, onClose }) {
   const dialog = useRef(null);
   const input = useRef(null);
+  const emailInput = useRef(null);
+  const gitlabInput = useRef(null);
+  const editEmailInput = useRef(null);
+  const editGitlabInput = useRef(null);
   const editButtons = useRef({});
   const [draft, setDraft] = useState({ name:'', email:'', gitlab:'' });
   const [editing, setEditing] = useState('');
   const [details, setDetails] = useState({ email:'', gitlab:'' });
   const [error, setError] = useState('');
+  const errorField = error.includes('GitLab') || error.includes('gitlab.com') ? 'gitlab' : error.includes('email') ? 'email' : 'name';
   const [editError, setEditError] = useState('');
+  const editErrorField = editError.includes('GitLab') || editError.includes('gitlab.com') ? 'gitlab' : 'email';
   useEffect(() => { dialog.current.showModal(); input.current.focus(); }, []);
   function add(event) {
     event.preventDefault();
     try { onAdd(draft.name.trim(), { email:draft.email, gitlab:draft.gitlab }); setDraft({ name:'', email:'', gitlab:'' }); setError(''); input.current.focus(); }
-    catch (failure) { setError(failure.message); }
+    catch (failure) { setError(failure.message); (failure.message.includes('GitLab') || failure.message.includes('gitlab.com') ? gitlabInput.current : failure.message.includes('email') ? emailInput.current : input.current)?.focus(); }
   }
   function saveDetails(event) {
     event.preventDefault();
     try { onUpdate(editing, details); const member = editing; setEditing(''); setEditError(''); requestAnimationFrame(() => editButtons.current[member]?.focus()); }
-    catch (failure) { setEditError(failure.message); }
+    catch (failure) { setEditError(failure.message); (failure.message.includes('GitLab') || failure.message.includes('gitlab.com') ? editGitlabInput.current : editEmailInput.current)?.focus(); }
   }
   function remove(member) {
     try { onRemove(member); setError(''); requestAnimationFrame(() => input.current?.focus()); }
@@ -38,14 +44,14 @@ export default function TeamManager({ members, profiles, tasks, onAdd, onUpdate,
         <div className="mb-4"><h3 id="add-member-title" className="font-semibold">Add a member</h3><p className="mt-1 text-sm text-text-muted">Their name will appear in assignment and Focus View.</p></div>
         <form onSubmit={add} className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
-            <div><label htmlFor="member-name" className="text-sm font-medium">Full name <span aria-hidden="true" className="text-due-overdue">*</span></label><input ref={input} id="member-name" value={draft.name} onChange={event => setDraft({ ...draft, name:event.target.value })} maxLength={60} autoComplete="name" required className={field} /></div>
-            <div><label htmlFor="member-email" className="text-sm font-medium">Email <span aria-hidden="true" className="text-due-overdue">*</span></label><input id="member-email" type="email" value={draft.email} onChange={event => setDraft({ ...draft, email:event.target.value })} maxLength={254} autoComplete="email" required className={field} /></div>
+            <div><label htmlFor="member-name" className="text-sm font-medium">Full name <span aria-hidden="true" className="text-due-overdue">*</span></label><input ref={input} id="member-name" value={draft.name} onChange={event => { setDraft({ ...draft, name:event.target.value }); setError(''); }} maxLength={60} autoComplete="name" required aria-invalid={Boolean(error && errorField === 'name')} aria-describedby={error && errorField === 'name' ? 'member-error' : undefined} className={field} /></div>
+            <div><label htmlFor="member-email" className="text-sm font-medium">Email <span aria-hidden="true" className="text-due-overdue">*</span></label><input ref={emailInput} id="member-email" type="email" value={draft.email} onChange={event => { setDraft({ ...draft, email:event.target.value }); setError(''); }} maxLength={254} autoComplete="email" required aria-invalid={Boolean(error && errorField === 'email')} aria-describedby={error && errorField === 'email' ? 'member-error' : undefined} className={field} /></div>
           </div>
-          <div><label htmlFor="member-gitlab" className="text-sm font-medium">GitLab profile <span className="font-normal text-text-muted">(optional)</span></label><input id="member-gitlab" type="url" placeholder="https://gitlab.com/username" value={draft.gitlab} onChange={event => setDraft({ ...draft, gitlab:event.target.value })} className={field} /></div>
+          <div><label htmlFor="member-gitlab" className="text-sm font-medium">GitLab profile <span className="font-normal text-text-muted">(optional)</span></label><input ref={gitlabInput} id="member-gitlab" type="url" placeholder="https://gitlab.com/username" value={draft.gitlab} onChange={event => { setDraft({ ...draft, gitlab:event.target.value }); setError(''); }} aria-invalid={Boolean(error && errorField === 'gitlab')} aria-describedby={error && errorField === 'gitlab' ? 'member-error' : undefined} className={field} /></div>
           <div className="flex flex-wrap items-center justify-between gap-3"><p className="max-w-sm text-xs leading-5 text-text-muted">Saved in this browser. GitLab links open profiles; they do not connect accounts.</p><button className="min-h-11 rounded-lg bg-brand-primary px-4 text-sm font-semibold text-white shadow-sm hover:bg-brand-accent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-link">+ Add member</button></div>
         </form>
       </section>
-      {error && <p role="alert" className="rounded-lg border border-due-overdue bg-due-overdue-soft p-3 text-sm text-due-overdue">{error}</p>}
+      {error && <p id="member-error" role="alert" className="rounded-lg border border-due-overdue bg-due-overdue-soft p-3 text-sm text-due-overdue">{error}</p>}
       <section aria-labelledby="members-title">
         <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2"><h3 id="members-title" className="text-lg font-semibold">Team members <span className="ml-1 rounded-full bg-stage-todo px-2 py-0.5 text-sm font-medium text-brand-link">{members.length}</span></h3><p className="text-xs text-text-muted">Reassign tasks before removing a member.</p></div>
         <ul className="divide-y divide-border-subtle overflow-hidden rounded-xl border border-border-subtle bg-surface-card">{members.map(member => {
@@ -59,7 +65,7 @@ export default function TeamManager({ members, profiles, tasks, onAdd, onUpdate,
               <div className="flex items-center gap-1"><button ref={element => { editButtons.current[member] = element; }} type="button" onClick={() => { setEditing(member); setDetails(profile); setEditError(''); }} className={quietButton} aria-label={`Edit ${member}’s details`}>Edit</button><button type="button" disabled={count > 0 || members.length === 1} title={count ? `Reassign ${member}’s tasks before removing` : members.length === 1 ? 'Keep at least one member' : undefined} onClick={() => remove(member)} className={`${quietButton} text-due-overdue hover:text-due-overdue disabled:cursor-not-allowed disabled:opacity-40`} aria-label={`Remove ${member}`}>Remove</button></div>
             </div>
             {profile.gitlab && <a href={profile.gitlab} target="_blank" rel="noopener noreferrer" className="ml-14 mt-1 inline-block break-all text-xs font-medium text-brand-link underline underline-offset-2">View GitLab profile for {member} ↗</a>}
-            {editing === member && <form onSubmit={saveDetails} className="ml-0 mt-4 space-y-3 rounded-lg bg-surface-column p-4 sm:ml-14"><h4 className="text-sm font-semibold">Edit {member}’s details</h4><div className="grid gap-3 sm:grid-cols-2"><div><label htmlFor="edit-email" className="text-sm font-medium">Email</label><input id="edit-email" type="email" value={details.email} onChange={event => setDetails({ ...details, email:event.target.value })} className={field} /></div><div><label htmlFor="edit-gitlab" className="text-sm font-medium">GitLab profile URL</label><input id="edit-gitlab" type="url" value={details.gitlab} onChange={event => setDetails({ ...details, gitlab:event.target.value })} className={field} /></div></div>{editError && <p role="alert" className="text-sm text-due-overdue">{editError}</p>}<div className="flex justify-end gap-2"><button type="button" onClick={() => { setEditing(''); setEditError(''); requestAnimationFrame(() => editButtons.current[member]?.focus()); }} className={quietButton}>Cancel</button><button className="min-h-11 rounded-lg bg-brand-primary px-4 text-sm font-semibold text-white hover:bg-brand-accent">Save details</button></div></form>}
+            {editing === member && <form onSubmit={saveDetails} className="ml-0 mt-4 space-y-3 rounded-lg bg-surface-column p-4 sm:ml-14"><h4 className="text-sm font-semibold">Edit {member}’s details</h4><div className="grid gap-3 sm:grid-cols-2"><div><label htmlFor="edit-email" className="text-sm font-medium">Email</label><input ref={editEmailInput} id="edit-email" type="email" value={details.email} onChange={event => { setDetails({ ...details, email:event.target.value }); setEditError(''); }} aria-invalid={Boolean(editError && editErrorField === 'email')} aria-describedby={editError && editErrorField === 'email' ? 'edit-member-error' : undefined} className={field} /></div><div><label htmlFor="edit-gitlab" className="text-sm font-medium">GitLab profile URL</label><input ref={editGitlabInput} id="edit-gitlab" type="url" value={details.gitlab} onChange={event => { setDetails({ ...details, gitlab:event.target.value }); setEditError(''); }} aria-invalid={Boolean(editError && editErrorField === 'gitlab')} aria-describedby={editError && editErrorField === 'gitlab' ? 'edit-member-error' : undefined} className={field} /></div></div>{editError && <p id="edit-member-error" role="alert" className="text-sm text-due-overdue">{editError}</p>}<div className="flex justify-end gap-2"><button type="button" onClick={() => { setEditing(''); setEditError(''); requestAnimationFrame(() => editButtons.current[member]?.focus()); }} className={quietButton}>Cancel</button><button className="min-h-11 rounded-lg bg-brand-primary px-4 text-sm font-semibold text-white hover:bg-brand-accent">Save details</button></div></form>}
           </li>;
         })}</ul>
       </section>

@@ -1,103 +1,33 @@
-# Vibecoding Project Tracker — Hackathon Starter
+# Vibecoding Project Tracker
 
-You're forking this repo as the starting point for the **UXD Vibecoding Hackathon 2026**. The goal of the hackathon is to ship a Vibecoding Project Tracker in ~3 hours: a Kanban-style tool that tracks your vibecoding tasks and stores the prompts that produced them.
+Benjamin Peck's individual React/Vite coursework prototype for a development team's task workflow. The interface uses a four-stage Kanban board, task context, ownership, due dates and four deliverable links. The initial ten tasks and three team members are fictional examples.
 
-This starter gives you:
+The entry screen is a **demo login**. Its Email and Password fields are disabled; selecting Log in opens the board as the fictional Alex Morgan. Log out returns to the entry screen. There is no authentication, database, server-side account or live multi-user collaboration. Tasks, roster, profiles, links and preferences are saved in this browser's localStorage on this origin. Another browser or device gets its own data. A reload returns to the demo login, while saved workspace data remains in the browser.
 
-- A pre-written **PRD** (`PRD.md`) — read it. You don't write the PRD this year; your Milestone 2 is to review, fill in the team-specific TODOs, and commit.
-- A pre-written **DESIGN.md** with the design-system slots Person B fills in during M3 (in parallel with M2).
-- A **Vite + React + Tailwind** scaffold with the boilerplate already configured.
-- The locked `Task` data model and `STAGES` constant in `src/App.jsx`.
-- A `useLocalStorage` hook so persistence is one line.
-- Empty TODO markers for every milestone, so AI tools can find them.
-
-What you build, starting at M4:
-
-- The four-column Kanban board.
-- The add / edit / delete modal.
-- The Prompt Context field (the differentiator).
-- The "Copy as Prompt Context" button (the demo's hero moment).
-- And everything else through M13.
-
-## Quick start
+## Run locally
 
 ```bash
-# 1. Fork this repo on GitHub. Then clone YOUR fork:
-git clone https://github.com/<your-team>/<your-fork>.git
-cd <your-fork>
-
-# 2. Install dependencies
 npm install
-
-# 3. Run the dev server
 npm run dev
 ```
 
-Open the URL Vite prints (typically `http://localhost:5173`). You should see a placeholder page with the team starter header and "Build the four-column board here · M3" in the middle. That's expected — M3 is your first build milestone.
+Open the address Vite prints, usually `http://localhost:5173/`. Select **Log in**; no details are needed.
 
-## Milestone workflow
-
-Every milestone ends with a git tag push. The Hackathon Portal dashboard watches your tags and updates the scoreboard in near real time.
+## Check and build
 
 ```bash
-git add .
-git commit -m "<tag-name>"
-git tag <tag-name>
-git push --tags
+node --test tests/*.test.js
+npm run build
 ```
 
-Replace `<tag-name>` with the tag for the milestone you just finished — see the table below. Tag names are lowercase, hyphenated, exact.
+The production output is in `dist/`. The public deployment previously used for assessment is [project-tracker-coral-alpha.vercel.app](https://project-tracker-coral-alpha.vercel.app/); check that it reflects the latest source before treating it as evidence.
 
-| # | Tag | What it means |
-|---|---|---|
-| 1 | `git-linked` | Repo registered on the portal, webhook delivers test ping |
-| 2 | `prd-done` | PRD reviewed, team-specific TODOs filled in |
-| 3 | `design-done` | DESIGN.md filled in, color tokens pasted into `tailwind.config.js` (parallel to M2) |
-| 4 | `data-model` | Four-column board renders with 3-4 mock tasks |
-| 5 | `crud-modal` | Add / edit / delete tasks via a modal, persisted to localStorage |
-| 6 | `tag-style` | Feature vs. bug visual distinction |
-| 7 | `task-owner` | Assignee badge on each card + "Hand off to..." dropdown |
-| 8 | `due-tint` | Cards change color as deadlines approach |
-| 9 | `context` | Curated Context field on the task modal (paste-ready briefing) |
-| 10 | `copy-prompt` | One-click copy formatted prompt to clipboard |
-| 11 | `project-deliverables` | Deliverable Anchor Board pinned above the Kanban |
-| 12 | `secret-sauce` | The one thing that makes your tracker uniquely yours (open-ended) |
-| 13 | `pitch-ready` | Demo dataset loaded, pitch rehearsed |
+## Where to find the specification
 
-## Repo map
+- [PRD.md](PRD.md): functional, non-functional and data requirements.
+- [DESIGN.md](DESIGN.md): visual and interaction decisions.
+- `src/App.jsx`: app state and local workflow.
+- `src/components/`: board, task editor, deliverables and team controls.
+- `src/data/`: validation, browser storage, sorting and task movement.
 
-```
-.
-├── PRD.md              ← READ THIS FIRST · review + fill in TODOs for M2
-├── DESIGN.md           ← Person B fills this in for M3 (parallel to M2)
-├── README.md           ← you are here
-├── package.json
-├── vite.config.js
-├── tailwind.config.js  ← M3 design tokens land here too
-├── postcss.config.js
-├── index.html
-├── .gitignore
-└── src/
-    ├── main.jsx        ← React entry point — don't change
-    ├── index.css       ← Tailwind directives — don't change
-    └── App.jsx         ← all your code goes here (or split into more files)
-```
-
-## Deploy (any time after M3)
-
-Vercel's free tier deploys a Vite + React app in one click:
-
-1. Go to [vercel.com](https://vercel.com), sign in with GitHub.
-2. Import your fork.
-3. Accept the defaults (Vite is auto-detected). Click Deploy.
-4. Drop the resulting URL into PRD §11 and into your team chat.
-
-Re-deploys happen automatically on every push to `main`.
-
-## A word about prompts
-
-Once M9 (`context`) is done, keep the Context field of each real task up to date as you work. By the end of the hackathon you should have a handful of curated context blocks on real tasks — those become part of your Module 5 "Vibe Coding History" deliverable. Free credit, just by using your own tool.
-
----
-
-*UXD Vibecoding Hackathon 2026 · Prof. Dr. Ignacio Alvarez*
+The private coursework evidence and assessment notes are held outside this repository in its sibling `Coursework Notes` folder. They are not part of the app or deployment.

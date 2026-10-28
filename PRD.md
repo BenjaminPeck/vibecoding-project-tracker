@@ -378,7 +378,7 @@ DR-01–DR-07 are **MVP**; DR-08–DR-11 support later additions. Each group ide
 
 **Source:** Priority field and board Order control in FR-13.
 
-**Data rules:** Each task stores `high`, `normal` or `low`; legacy tasks without this field behave as `normal`. Store the selected order mode (`priority`, `due` or `manual`) separately from task records. Missing or unrecognised mode defaults to `priority`.
+**Data rules:** Each task stores `high`, `normal` or `low`; legacy tasks without this field behave as `normal`. Store the selected order mode (`priority`, `due` or `manual`) separately from task records. Missing or unrecognised mode defaults to `priority`. Manual card order is the saved order of task records in the browser-local task list; moving a card updates that list. The other modes sort the display within each stage without changing saved manual order.
 
 ### DR-11 — Local team roster
 
@@ -398,7 +398,7 @@ DR-01–DR-07 are **MVP**; DR-08–DR-11 support later additions. Each group ide
 | `type` | `feature` or `bug`; default `feature` | User selection |
 | `priority` | `high`, `normal` or `low`; default `normal` | User selection |
 | `status` | `todo`, `in-progress`, `review`, `done`; default `todo` | User selection |
-| `assignee` | Required string matching one of three configured team member names | User selection from team configuration |
+| `assignee` | Required string matching a current roster member; three fictional names are supplied initially | User selection from team configuration |
 | `dueDate` | Valid ISO date `YYYY-MM-DD` or null | User input |
 | `createdDate` | ISO date `YYYY-MM-DD`; unchanged during edits | Application generates on creation |
 | `context` | Markdown string preserving line breaks; empty allowed | User input, initially offered the FR-08 template |

@@ -127,7 +127,7 @@ function TaskCard({ task, members, stageTasks, stageIndex, onEdit, onHandoff, on
         <span className={`shrink-0 whitespace-nowrap rounded-md px-2 py-1 text-xs font-medium ${dueClasses[urgency]}`} aria-label={dueLabel(task, urgency)} title={dueLabel(task, urgency)}>{dueShortLabel(task, urgency)}</span>
       </div>
       <div className="mt-2">
-        <button ref={copyButton} type="button" onClick={copyTask} className="flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm font-medium text-brand-link hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-link"><CopyIcon copied={copied} size={16} />Copy Context</button>
+        <button ref={copyButton} type="button" onClick={copyTask} aria-label={`Copy Context for “${task.title}”`} className="flex min-h-11 items-center gap-2 rounded-lg px-2 text-sm font-medium text-brand-link hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-link"><CopyIcon copied={copied} size={16} />Copy Context</button>
       </div>
       <span role="status" className="sr-only">{copied ? 'Context copied.' : ''}</span>
       {copyFallback && <CopyFallback text={copyFallback} onClose={() => { setCopyFallback(''); copyButton.current?.focus(); }} />}

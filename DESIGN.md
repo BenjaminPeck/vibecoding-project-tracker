@@ -2,13 +2,13 @@
 
 Status: Revised direction for software engineers: modern, warm and focused.
 Owner: Benjamin Peck, sole developer. The application serves a team of users.
-Scope: M3 `design-done`. Visual specification and reusable tokens for the later build milestones.
+Scope: Current prototype design and interaction specification, developed from the M3 `design-done` direction.
 
 ## 1. Mood and layout
 
 A modern engineering workspace with warm surfaces, precise typography and purposeful colour, built for scanning tasks and resuming technical work.
 
-Design for software engineers working in teams. Use warm ivory surroundings, white task cards, charcoal text and saturated indigo primary actions. Pale lavender, blue, amber and sage column headers add colour without tinting every task. Keep controls compact, labels explicit and technical context easy to scan. This direction reflects Benjamin’s preference; usability has not yet been tested. No external visual references have been selected.
+Design for software engineers working in teams. Use warm ivory surroundings, white task cards, charcoal text and saturated indigo primary actions. Pale lavender, blue, amber and sage column headers add colour without tinting every task. Keep controls compact, labels explicit and technical context easy to scan. This direction reflects Benjamin’s preference; usability with target engineers has not yet been tested. It is a design choice, not a finding from stakeholder research.
 
 Before the workspace, show a clearly labelled Demo login page with Email and Password fields that are visibly disabled and cannot accept details. The text says that no details are needed; its Log in button opens the prototype as Alex Morgan without checking credentials. A Log out button in the workspace returns to the login page without deleting browser-local work. The entry text states that no one is authenticated and changes stay in this browser. The login page appears again after a reload; it does not create an account, session or shared team data. Benjamin requested this prototype-only interaction after course-group reports of verbal login guidance; it is not a verified client request or a working login system.
 
@@ -74,7 +74,7 @@ Use local system fonts to avoid font downloads and keep the prototype predictabl
 
 - Page title: 20px / 28px, semibold, slightly tight letter spacing (-0.02em).
 - Column and modal section titles: 16px / 24px, semibold, sentence case.
-- Card titles: 14px / 20px, semibold; wrap rather than hide the title.
+- Card titles: 16px / 24px, semibold; wrap rather than hide the title.
 - Body, buttons and form values: 14px / 20px.
 - Supporting labels and timestamps: 14px / 20px; do not use muted colour to hide important information.
 - Context editor: 13px / 20px, monospace.
@@ -168,7 +168,7 @@ Target WCAG 2.2 Level AA across the finished prototype. This is a design target,
 | Check | Implementation and manual acceptance |
 |---|---|
 | Keyboard | Complete create, edit, assign, move, copy and delete with Tab, Shift+Tab, Enter/Space and native select keys. No mouse-only actions or keyboard traps. Add a skip link to the main board. |
-| Focus | Use a clearly visible 2px indigo outline with a 2px offset. Keep focused controls visible and unobscured. After deletion, focus the next task or Add task if none remain. |
+| Focus | Use a clearly visible 2px indigo outline with a 2px offset. Keep focused controls visible and unobscured. After deletion, focus Add task because the deleted card opener is removed; closing an unchanged editor returns focus to its opener. |
 | Dialogs | Give the modal an accessible title; move focus inside, contain Tab navigation, make background content inert, support Escape and restore focus to the opener. A delete confirmation initially focuses Cancel. |
 | Semantics | Use native buttons, inputs and selects, one page heading, labelled stage sections and task lists. Icon-only controls have accessible names; decorative icons are hidden from assistive technology. |
 | Forms | Associate visible labels with inputs. Connect hints/errors using aria-describedby and mark invalid fields with aria-invalid. Explain how to fix errors and retain entered values; focus the first invalid input after failed submission. |

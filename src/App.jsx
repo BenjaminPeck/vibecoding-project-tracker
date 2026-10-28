@@ -124,8 +124,8 @@ export default function App() {
     catch { setMessage('Could not reset storage. Check browser settings and retry.'); }
   }
   function resetWorkspace() {
-    if (!window.confirm('Reset local team and tasks? This permanently replaces this browser’s saved roster and tasks with examples.')) return;
-    try { saveTasks(window.localStorage, createExampleTasks(), TEAM); saveTeam(window.localStorage, TEAM); setFocusOwner(''); saveFocusOwner(window.localStorage, '', TEAM); load(); }
+    if (!window.confirm('Reset local team and tasks? This permanently replaces this browser’s saved roster, contact details and tasks with examples.')) return;
+    try { saveTasks(window.localStorage, createExampleTasks(), TEAM); saveTeam(window.localStorage, TEAM); saveProfiles(window.localStorage, {}); setFocusOwner(''); saveFocusOwner(window.localStorage, '', TEAM); load(); }
     catch { setMessage('Could not reset local team and tasks. Check browser storage settings and retry.'); }
   }
   function closeTeam() { setManagingTeam(false); requestAnimationFrame(() => teamButton.current?.focus()); }
